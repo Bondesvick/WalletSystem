@@ -10,7 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using WalletSystemAPI.Data;
+using WalletSystemAPI.Models;
 
 namespace CurrencyAPI
 {
@@ -27,6 +31,13 @@ namespace CurrencyAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<DataContext>(options =>
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DbConn")));
+
+            services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<DataContext>();
 
             services.AddSwaggerGen(c =>
             {
