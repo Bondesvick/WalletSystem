@@ -20,5 +20,7 @@ namespace WalletSystemAPI.Models
 
         [ForeignKey("OwnerId")]
         public User Owner { get; set; }
+
+        public bool IsMain { get; set; }
     }
 }

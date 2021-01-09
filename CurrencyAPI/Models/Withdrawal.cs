@@ -14,5 +14,10 @@ namespace WalletSystemAPI.Models
 
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
+
+        [ForeignKey("SourceId")]
+        public User Source { get; set; }
+
+        public string SourceId { get; set; }
     }
 }
