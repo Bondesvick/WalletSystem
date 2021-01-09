@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Data;
+using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
 
@@ -33,6 +34,16 @@ namespace WalletSystemAPI.Services
         }
 
         public List<Wallet> GetAllWallets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FundWallet(FundingDto fundingDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
             throw new NotImplementedException();
         }

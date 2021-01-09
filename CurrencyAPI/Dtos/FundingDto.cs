@@ -7,8 +7,9 @@ namespace WalletSystemAPI.Dtos
 {
     public class FundingDto
     {
+        public string UserId { get; set; }
+        public int WalletId { get; set; }
         public string CurrencyId { get; set; }
         public Decimal Amount { get; set; }
-        public string DestinationWalletId { get; set; }
     }
 }

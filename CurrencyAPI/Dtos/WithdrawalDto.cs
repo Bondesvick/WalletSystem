@@ -7,8 +7,9 @@ namespace WalletSystemAPI.Dtos
 {
     public class WithdrawalDto
     {
+        public string UserId { get; set; }
         public string CurrencyId { get; set; }
         public Decimal Amount { get; set; }
-        public string SourceWalletId { get; set; }
+        public string WalletId { get; set; }
     }
 }
