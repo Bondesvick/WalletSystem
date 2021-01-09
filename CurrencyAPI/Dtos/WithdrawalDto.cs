@@ -10,6 +10,6 @@ namespace WalletSystemAPI.Dtos
         public string UserId { get; set; }
         public string CurrencyId { get; set; }
         public Decimal Amount { get; set; }
-        public string WalletId { get; set; }
+        public int WalletId { get; set; }
     }
 }

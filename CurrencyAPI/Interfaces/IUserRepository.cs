@@ -14,7 +14,7 @@ namespace WalletSystemAPI.Interfaces
 
         List<User> GetAllUsers();
 
-        void LoginUser(string id);
+        Task<string> LoginUser(string id);
 
         Task<bool> DeleteUser(string id);
 

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
 
@@ -47,9 +48,14 @@ namespace WalletSystemAPI.Services
             return _userManager.Users.ToList();
         }
 
-        public void LoginUser(string id)
+        public async Task<string> LoginUser(string id)
         {
-            _signManager.SignInAsync(GetUser(id), false);
+            var user = GetUser(id);
+            var roles = await GetUserRoles(user);
+
+            await _signManager.SignInAsync(user, false);
+
+            return JwtTokenConfig.GetToken(user, _config, roles);
         }
 
         public async Task<bool> DeleteUser(string id)

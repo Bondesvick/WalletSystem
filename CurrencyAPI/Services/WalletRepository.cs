@@ -20,32 +20,72 @@ namespace WalletSystemAPI.Services
 
         public bool AddWallet(Wallet wallet)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Wallets.AddAsync(wallet);
+                _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public bool DeleteWallet(int id)
+        public async Task<bool> DeleteWallet(int id)
         {
-            throw new NotImplementedException();
+            var wallet = await GetWalletById(id);
+            try
+            {
+                _context.Wallets.Remove(wallet);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Wallet GetWalletById(int id)
+        public bool UpdateWallet(Wallet wallet)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Wallets.Update(wallet);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public ValueTask<Wallet> GetWalletById(int id)
+        {
+            return _context.Wallets.FindAsync(id);
         }
 
         public List<Wallet> GetAllWallets()
         {
-            throw new NotImplementedException();
+            return _context.Wallets.ToList();
         }
 
-        public bool FundWallet(FundingDto fundingDto)
+        public async Task<bool> FundWallet(FundingDto fundingDto)
         {
-            throw new NotImplementedException();
+            var wallet = await GetWalletById(fundingDto.WalletId);
+            wallet.Balance += fundingDto.Amount;
+
+            return UpdateWallet(wallet);
         }
 
-        public bool WithdrawFromWallet(WithdrawalDto withdrawalDto)
+        public async Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
-            throw new NotImplementedException();
+            var wallet = await GetWalletById(withdrawalDto.WalletId);
+            wallet.Balance -= withdrawalDto.Amount;
+
+            return UpdateWallet(wallet);
         }
     }
 }

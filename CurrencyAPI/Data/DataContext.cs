@@ -13,5 +13,9 @@ namespace WalletSystemAPI.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
+
+        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Funding> Fundings { get; set; }
     }
 }
