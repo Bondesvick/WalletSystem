@@ -10,12 +10,14 @@ namespace WalletSystemAPI.Interfaces
     {
         User GetUser(string id);
 
-        bool RegisterUser(User user);
+        Task<bool> RegisterUser(User user, string password);
 
         List<User> GetAllUsers();
 
-        bool LoginUser(string id);
+        void LoginUser(string id);
 
-        bool DeleteUser(string id);
+        Task<bool> DeleteUser(string id);
+
+        Task<IList<string>> GetUserRoles(User user);
     }
 }

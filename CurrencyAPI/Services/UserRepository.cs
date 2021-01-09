@@ -33,27 +33,36 @@ namespace WalletSystemAPI.Services
 
         public User GetUser(string id)
         {
-            throw new NotImplementedException();
+            return _userManager.Users.FirstOrDefault(user => user.Id == id);
         }
 
-        public bool RegisterUser(User user)
+        public async Task<bool> RegisterUser(User user, string password)
         {
-            throw new NotImplementedException();
+            var result = await _userManager.CreateAsync(user, password);
+            return result.Succeeded;
         }
 
         public List<User> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return _userManager.Users.ToList();
         }
 
-        public bool LoginUser(string id)
+        public void LoginUser(string id)
         {
-            throw new NotImplementedException();
+            _signManager.SignInAsync(GetUser(id), false);
         }
 
-        public bool DeleteUser(string id)
+        public async Task<bool> DeleteUser(string id)
         {
-            throw new NotImplementedException();
+            var user = GetUser(id);
+            var result = await _userManager.DeleteAsync(user);
+
+            return result.Succeeded;
+        }
+
+        public Task<IList<string>> GetUserRoles(User user)
+        {
+            return _userManager.GetRolesAsync(user);
         }
     }
 }
