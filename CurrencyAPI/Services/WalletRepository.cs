@@ -67,6 +67,11 @@ namespace WalletSystemAPI.Services
             return _context.Wallets.FindAsync(id);
         }
 
+        public List<Wallet> GwWalletsById(int id)
+        {
+            return _context.Wallets.Where(w => w.Id == id).ToList();
+        }
+
         public List<Wallet> GetAllWallets()
         {
             return _context.Wallets.ToList();

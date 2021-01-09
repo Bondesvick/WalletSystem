@@ -17,6 +17,8 @@ namespace WalletSystemAPI.Interfaces
 
         ValueTask<Wallet> GetWalletById(int id);
 
+        List<Wallet> GwWalletsById(int id);
+
         List<Wallet> GetAllWallets();
 
         Task<bool> FundWallet(FundingDto fundingDto);

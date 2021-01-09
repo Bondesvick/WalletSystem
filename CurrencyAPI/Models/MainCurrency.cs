@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace WalletSystemAPI.Models
 {
-    public class Wallet
+    public class MainCurrency
     {
         public int Id { get; set; }
-        public Decimal Balance { get; set; }
 
         public string CurrencyId { get; set; }
 
