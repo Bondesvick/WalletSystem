@@ -9,7 +9,7 @@ namespace WalletSystemAPI.Models
     public class Wallet
     {
         public int Id { get; set; }
-        public Decimal Balance { get; set; }
+        public decimal Balance { get; set; }
 
         public string CurrencyId { get; set; }
 
