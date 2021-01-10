@@ -23,33 +23,44 @@ namespace WalletSystemAPI.Helpers
                 using HttpContent content = response.Content;
                 var myContent = await content.ReadAsStringAsync();
 
-                var value = JsonConvert.DeserializeObject<RequestRoot>(myContent);
-
-                return value;
+                try
+                {
+                    var value = JsonConvert.DeserializeObject<RequestRoot>(myContent);
+                    return value;
+                }
+                catch
+                {
+                    return null;
+                }
             }
 
             return null;
         }
 
-        public static async Task<decimal> ConvertCurrency(string sourceCode, string targetCode, decimal amount)
+        public static async Task<decimal?> ConvertCurrency(string sourceCode, string targetCode, decimal amount)
         {
             var rate = await GetExchangeRate();
 
-            var baseRate = ReflectionConverter.GetPropertyValue(rate.Rates, rate.Base);
-            var sourceRate = ReflectionConverter.GetPropertyValue(rate.Rates, sourceCode);
-            var targetRate = ReflectionConverter.GetPropertyValue(rate.Rates, targetCode);
+            if (rate != null)
+            {
+                var baseRate = ReflectionConverter.GetPropertyValue(rate.Rates, rate.Base);
+                var sourceRate = ReflectionConverter.GetPropertyValue(rate.Rates, sourceCode);
+                var targetRate = ReflectionConverter.GetPropertyValue(rate.Rates, targetCode);
 
-            decimal.TryParse(sourceRate.ToString(), out decimal sourceRateValue);
-            decimal.TryParse(targetRate.ToString(), out decimal targetRateValue);
-            decimal.TryParse(baseRate.ToString(), out decimal baseRateValue);
+                decimal.TryParse(baseRate.ToString(), out decimal baseRateValue);
+                decimal.TryParse(sourceRate.ToString(), out decimal sourceRateValue);
+                decimal.TryParse(targetRate.ToString(), out decimal targetRateValue);
 
-            // First Convert the source currency amoun to its equivalent in base currency
-            var sourceToBaseValue = (baseRateValue * amount) / sourceRateValue;
+                // First Convert the source currency amount to its equivalent in base currency
+                var sourceAmountToBaseValue = (baseRateValue * amount) / sourceRateValue;
 
-            // Then Convert to the target currency
-            var converted = (sourceToBaseValue * targetRateValue) / baseRateValue;
+                // Then Convert to the target currency
+                var converted = (sourceAmountToBaseValue * targetRateValue) / baseRateValue;
 
-            return converted;
+                return converted;
+            }
+
+            return null;
         }
     }
 }
