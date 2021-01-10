@@ -48,7 +48,7 @@
         public double EGP { get; set; }
         public double ERN { get; set; }
         public double ETB { get; set; }
-        public int EUR { get; set; }
+        public double EUR { get; set; }
         public double FJD { get; set; }
         public double FKP { get; set; }
         public double GBP { get; set; }
