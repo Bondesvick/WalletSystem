@@ -11,12 +11,10 @@ namespace WalletSystemAPI.Services
     public class TransactionRepository : ITransactionRepository
     {
         private readonly DataContext _context;
-        private readonly IWalletRepository _walletRepository;
 
-        public TransactionRepository(DataContext context, IWalletRepository walletRepository)
+        public TransactionRepository(DataContext context)
         {
             _context = context;
-            _walletRepository = walletRepository;
         }
 
         public bool CreateTransaction(TransactionType type, decimal amount, int walletId, int currencyId)

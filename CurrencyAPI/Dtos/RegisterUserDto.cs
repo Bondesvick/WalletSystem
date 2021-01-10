@@ -29,10 +29,6 @@ namespace WalletSystemAPI.Dtos
         public string Type { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string UniqueId { get; set; }
-
-        [Required]
         public string Password { get; set; }
 
         [Required]

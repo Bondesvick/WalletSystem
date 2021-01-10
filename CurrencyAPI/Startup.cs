@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -33,6 +34,7 @@ namespace CurrencyAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IFundRepository, FundRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -90,9 +92,11 @@ namespace CurrencyAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet System Api V1");
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
