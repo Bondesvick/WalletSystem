@@ -1,7 +1,8 @@
-# WalletSystem
-A wallet system for a product used in multiple countries
+# Wallet System API
 
-## This system would only be accessible to authenticated users.
+## A wallet system for a product used in multiple countries
+
+### This system would only be accessible to authenticated users.
 ### User types:
   - Noob
   
