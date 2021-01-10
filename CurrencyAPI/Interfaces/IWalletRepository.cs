@@ -13,17 +13,19 @@ namespace WalletSystemAPI.Interfaces
 
         Task<bool> DeleteWallet(int id);
 
-        bool UpdateWallet(Wallet wallet);
+        Task<bool> UpdateWallet(Wallet wallet);
 
         bool CheckWallet(int walletId);
 
-        ValueTask<Wallet> GetWalletById(int id);
+        Wallet GetWalletById(int id);
 
         List<Wallet> GwWalletsById(int id);
 
         List<Wallet> GetAllWallets();
 
         Task<bool> FundWallet(FundingDto fundingDto);
+
+        Task<bool> FundNoobWallet(Funding funding);
 
         Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto);
     }

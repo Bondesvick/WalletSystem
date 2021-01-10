@@ -38,6 +38,7 @@ namespace CurrencyAPI
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<ICurrencyRepository, CurrencyRepository>();
 
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlite(
