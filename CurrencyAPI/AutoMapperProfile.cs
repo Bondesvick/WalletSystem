@@ -8,7 +8,7 @@ namespace WalletSystemAPI
     {
         public AutoMapperProfile()
         {
-            CreateMap<RegisterUserDto, User>();
+            CreateMap<User, GetUserDto>();
         }
     }
 }

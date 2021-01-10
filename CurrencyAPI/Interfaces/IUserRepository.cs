@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Interfaces
 {
     public interface IUserRepository
     {
-        User GetUser(string id);
+        public GetUserDto MapUser(string id);
+
+        User GetUserById(string id);
+
+        Task<User> GetUserByEmail(string email);
 
         Task<bool> RegisterUser(User user, string password);
 
         List<User> GetAllUsers();
 
-        Task<string> LoginUser(string id);
+        Task<string> LoginUser(UserToLoginDto userToLoginDto);
 
         Task<bool> DeleteUser(string id);
 
