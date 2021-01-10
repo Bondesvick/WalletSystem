@@ -3,6 +3,7 @@
 ## A wallet system for a product used in multiple countries
 
 ### This system would only be accessible to authenticated users.
+--------
 ### User types:
  1. Noob
   
