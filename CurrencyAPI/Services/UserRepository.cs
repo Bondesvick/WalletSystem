@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using WalletSystemAPI.Helpers;
+using WalletSystemAPI.Interfaces;
+using WalletSystemAPI.Models;
+
+namespace WalletSystemAPI.Services
+{
+    public class UserRepository : IUserRepository
+    {
+        private readonly IConfiguration _config;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signManager;
+        private readonly ILogger<UserRepository> _logger;
+        private readonly IMapper _mapper;
+
+        public UserRepository(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UserRepository> logger, IMapper mapper)
+        {
+            _config = configuration;
+            _logger = logger;
+            _roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            _userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            _signManager = serviceProvider.GetRequiredService<SignInManager<User>>();
+            _mapper = mapper;
+        }
+
+        public User GetUser(string id)
+        {
+            return _userManager.Users.FirstOrDefault(user => user.Id == id);
+        }
+
+        public async Task<bool> RegisterUser(User user, string password)
+        {
+            var result = await _userManager.CreateAsync(user, password);
+            return result.Succeeded;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return _userManager.Users.ToList();
+        }
+
+        public async Task<string> LoginUser(string id)
+        {
+            var user = GetUser(id);
+            var roles = await GetUserRoles(user);
+
+            await _signManager.SignInAsync(user, false);
+
+            return JwtTokenConfig.GetToken(user, _config, roles);
+        }
+
+        public async Task<bool> DeleteUser(string id)
+        {
+            var user = GetUser(id);
+            var result = await _userManager.DeleteAsync(user);
+
+            return result.Succeeded;
+        }
+
+        public Task<IList<string>> GetUserRoles(User user)
+        {
+            return _userManager.GetRolesAsync(user);
+        }
+    }
+}
