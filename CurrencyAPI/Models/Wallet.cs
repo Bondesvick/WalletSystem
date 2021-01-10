@@ -11,14 +11,16 @@ namespace WalletSystemAPI.Models
         public int Id { get; set; }
         public decimal Balance { get; set; }
 
-        public string CurrencyId { get; set; }
-
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
 
-        public string OwnerId { get; set; }
+        public string CurrencyId { get; set; }
 
         [ForeignKey("OwnerId")]
         public User Owner { get; set; }
+
+        public string OwnerId { get; set; }
+
+        public IList<Transaction> Transactions { get; set; }
     }
 }

@@ -17,6 +17,6 @@ namespace WalletSystemAPI.Data
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Funding> Fundings { get; set; }
-        public DbSet<MainCurrency> MainCurrencies { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

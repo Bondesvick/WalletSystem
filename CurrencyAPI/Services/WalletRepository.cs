@@ -12,10 +12,12 @@ namespace WalletSystemAPI.Services
     public class WalletRepository : IWalletRepository
     {
         private readonly DataContext _context;
+        private readonly ITransactionRepository _transactionRepository;
 
-        public WalletRepository(DataContext context)
+        public WalletRepository(DataContext context, ITransactionRepository transactionRepository)
         {
             _context = context;
+            _transactionRepository = transactionRepository;
         }
 
         public bool AddWallet(Wallet wallet)
@@ -60,6 +62,11 @@ namespace WalletSystemAPI.Services
             {
                 return false;
             }
+        }
+
+        public bool CheckWallet(int walletId)
+        {
+            return _context.Wallets.Any(w => w.Id == walletId);
         }
 
         public ValueTask<Wallet> GetWalletById(int id)

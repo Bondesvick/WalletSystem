@@ -15,6 +15,8 @@ namespace WalletSystemAPI.Interfaces
 
         bool UpdateWallet(Wallet wallet);
 
+        bool CheckWallet(int walletId);
+
         ValueTask<Wallet> GetWalletById(int id);
 
         List<Wallet> GwWalletsById(int id);
