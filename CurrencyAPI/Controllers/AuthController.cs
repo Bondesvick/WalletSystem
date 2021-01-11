@@ -66,7 +66,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You account has been logged-in", null, token));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetUserDetail/{id}")]
         public IActionResult GetUser(string id)
         {
             ServiceResponse<GetUserDto> response = new ServiceResponse<GetUserDto>();
