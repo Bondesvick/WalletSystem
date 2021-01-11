@@ -16,13 +16,13 @@ namespace WalletSystemAPI.Controllers
         {
         }
 
-        [HttpPost]
+        [HttpPost("CreateWallet")]
         public IActionResult CreateWallet(CreateWalletDto walletDto)
         {
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteWallet/{id}")]
         public IActionResult DeleteWallet(int id)
         {
             return Ok();
@@ -34,7 +34,7 @@ namespace WalletSystemAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetWalletDetail/{id}")]
         public IActionResult GetWallet(int id)
         {
             return Ok();
