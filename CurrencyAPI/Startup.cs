@@ -9,9 +9,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Interfaces;
@@ -33,6 +38,7 @@ namespace CurrencyAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IFundRepository, FundRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -46,6 +52,20 @@ namespace CurrencyAPI
 
             services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("AppSettings:Token").Value))
+                    };
+                });
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSwaggerGen(c =>
             {
@@ -77,7 +97,7 @@ namespace CurrencyAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -90,11 +110,15 @@ namespace CurrencyAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet System Api V1");
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
+
+            PreSeeder.Seed(context, roleManager, userManager).Wait();
 
             app.UseEndpoints(endpoints =>
             {

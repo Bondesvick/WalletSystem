@@ -18,5 +18,12 @@ namespace WalletSystemAPI.Data
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Funding> Fundings { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+
+        //    modelBuilder.ApplyConfiguration(new SeedCurrency());
+        //}
     }
 }

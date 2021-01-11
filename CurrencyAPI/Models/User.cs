@@ -17,6 +17,8 @@ namespace WalletSystemAPI.Models
 
         public int MainCurrencyId { get; set; }
 
+        public string Address { get; set; }
+
         public ICollection<Wallet> Wallets { get; set; }
     }
 }

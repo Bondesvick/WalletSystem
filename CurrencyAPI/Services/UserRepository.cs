@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
@@ -32,9 +33,22 @@ namespace WalletSystemAPI.Services
             _mapper = mapper;
         }
 
-        public User GetUser(string id)
+        public GetUserDto MapUser(string id)
+        {
+            var user = GetUserById(id);
+            var userToReturn = _mapper.Map<GetUserDto>(user);
+
+            return userToReturn;
+        }
+
+        public User GetUserById(string id)
         {
             return _userManager.Users.FirstOrDefault(user => user.Id == id);
+        }
+
+        public Task<User> GetUserByEmail(string email)
+        {
+            return _userManager.FindByEmailAsync(email);
         }
 
         public async Task<bool> RegisterUser(User user, string password)
@@ -43,14 +57,19 @@ namespace WalletSystemAPI.Services
             return result.Succeeded;
         }
 
+        public void AddUserToRole(User user, string role)
+        {
+            _userManager.AddToRoleAsync(user, role);
+        }
+
         public List<User> GetAllUsers()
         {
             return _userManager.Users.ToList();
         }
 
-        public async Task<string> LoginUser(string id)
+        public async Task<string> LoginUser(UserToLoginDto userToLoginDto)
         {
-            var user = GetUser(id);
+            var user = await GetUserByEmail(userToLoginDto.Email);
             var roles = await GetUserRoles(user);
 
             await _signManager.SignInAsync(user, false);
@@ -60,7 +79,7 @@ namespace WalletSystemAPI.Services
 
         public async Task<bool> DeleteUser(string id)
         {
-            var user = GetUser(id);
+            var user = GetUserById(id);
             var result = await _userManager.DeleteAsync(user);
 
             return result.Succeeded;

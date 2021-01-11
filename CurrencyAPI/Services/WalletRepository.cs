@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Interfaces;
@@ -13,12 +15,16 @@ namespace WalletSystemAPI.Services
     {
         private readonly DataContext _context;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public WalletRepository(DataContext context, ITransactionRepository transactionRepository)
+        public WalletRepository(DataContext context, ITransactionRepository transactionRepository, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _transactionRepository = transactionRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         public bool AddWallet(Wallet wallet)
         {
