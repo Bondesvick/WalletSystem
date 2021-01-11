@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
 

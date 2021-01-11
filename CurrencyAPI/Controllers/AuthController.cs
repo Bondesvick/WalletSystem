@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;

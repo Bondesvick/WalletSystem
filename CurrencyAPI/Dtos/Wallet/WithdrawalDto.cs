@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace WalletSystemAPI.Dtos
+namespace WalletSystemAPI.Dtos.Wallet
 {
     public class WithdrawalDto
     {

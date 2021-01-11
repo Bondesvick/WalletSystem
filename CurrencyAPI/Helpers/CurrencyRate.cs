@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.Currency;
 
 namespace WalletSystemAPI.Helpers
 {

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;

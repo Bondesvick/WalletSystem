@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Interfaces

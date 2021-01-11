@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WalletSystemAPI.Dtos
+namespace WalletSystemAPI.Dtos.User
 {
     public class UserToLoginDto
     {

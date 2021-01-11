@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.Wallet;
+using WalletSystemAPI.Interfaces;
 
 namespace WalletSystemAPI.Controllers
 {
@@ -12,8 +14,11 @@ namespace WalletSystemAPI.Controllers
     [ApiController]
     public class WalletController : ControllerBase
     {
-        public WalletController()
+        private readonly IWalletRepository _walletRepository;
+
+        public WalletController(IWalletRepository walletRepository)
         {
+            _walletRepository = walletRepository;
         }
 
         [HttpPost("CreateWallet")]
