@@ -118,6 +118,8 @@ namespace CurrencyAPI
 
             app.UseAuthorization();
 
+            PreSeeder.Seed(context, roleManager, userManager).Wait();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

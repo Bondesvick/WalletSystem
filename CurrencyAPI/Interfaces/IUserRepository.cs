@@ -17,6 +17,8 @@ namespace WalletSystemAPI.Interfaces
 
         Task<bool> RegisterUser(User user, string password);
 
+        void AddUserToRole(User user, string role);
+
         List<User> GetAllUsers();
 
         Task<string> LoginUser(UserToLoginDto userToLoginDto);

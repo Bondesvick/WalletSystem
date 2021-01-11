@@ -57,6 +57,11 @@ namespace WalletSystemAPI.Services
             return result.Succeeded;
         }
 
+        public void AddUserToRole(User user, string role)
+        {
+            _userManager.AddToRoleAsync(user, role);
+        }
+
         public List<User> GetAllUsers()
         {
             return _userManager.Users.ToList();

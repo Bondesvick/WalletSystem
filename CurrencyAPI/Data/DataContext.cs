@@ -19,11 +19,11 @@ namespace WalletSystemAPI.Data
         public DbSet<Funding> Fundings { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new SeedCurrency());
-        }
+        //    modelBuilder.ApplyConfiguration(new SeedCurrency());
+        //}
     }
 }

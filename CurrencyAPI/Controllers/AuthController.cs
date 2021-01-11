@@ -43,10 +43,11 @@ namespace WalletSystemAPI.Controllers
                 Address = userToRegisterUserDto.Address
             };
 
-            var response = await _userRepository.RegisterUser(user, userToRegisterUserDto.Password);
-            if (response)
+            var succeeded = await _userRepository.RegisterUser(user, userToRegisterUserDto.Password);
+            if (!succeeded)
                 return BadRequest(ResponseMessage.Message("Unable register User"));
 
+            _userRepository.AddUserToRole(user, userToRegisterUserDto.Role);
             return Ok(ResponseMessage.Message("Account Created", null, userToRegisterUserDto));
         }
 

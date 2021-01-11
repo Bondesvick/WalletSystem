@@ -28,6 +28,9 @@ namespace WalletSystemAPI.Dtos
         public string Password { get; set; }
 
         [Required]
+        public string Role { get; set; }
+
+        [Required]
         [MaxLength(255)]
         public string Address { get; set; }
     }
