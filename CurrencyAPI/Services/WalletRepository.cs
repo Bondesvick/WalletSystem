@@ -78,12 +78,17 @@ namespace WalletSystemAPI.Services
             return _context.Wallets.Any(w => w.Id == walletId);
         }
 
+        public List<Wallet> GetAllMyWallets()
+        {
+            return _context.Wallets.Where(w => w.OwnerId == GetUserId()).ToList();
+        }
+
         public Wallet GetWalletById(int id)
         {
             return _context.Wallets.FirstOrDefault(w => w.Id == id);
         }
 
-        public List<Wallet> GwWalletsById(int id)
+        public List<Wallet> GetWalletsById(int id)
         {
             return _context.Wallets.Where(w => w.Id == id).ToList();
         }

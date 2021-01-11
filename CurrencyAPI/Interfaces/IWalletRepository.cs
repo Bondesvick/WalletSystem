@@ -18,9 +18,11 @@ namespace WalletSystemAPI.Interfaces
 
         bool CheckWallet(int walletId);
 
+        List<Wallet> GetAllMyWallets();
+
         Wallet GetWalletById(int id);
 
-        List<Wallet> GwWalletsById(int id);
+        List<Wallet> GetWalletsById(int id);
 
         List<Wallet> GetAllWallets();
 

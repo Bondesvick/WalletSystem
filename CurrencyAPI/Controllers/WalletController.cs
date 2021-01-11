@@ -34,32 +34,60 @@ namespace WalletSystemAPI.Controllers
                 CurrencyId = walletDto.CurrencyId,
                 OwnerId = walletDto.OwnerId
             };
+
             var created = _walletRepository.AddWallet(wallet);
 
-            return Ok();
+            if (!created)
+                return BadRequest(ResponseMessage.Message("Unable to create wallet",
+                    "error encountered while creating wallet", walletDto));
+
+            return Ok(ResponseMessage.Message("Wallet successfully created", null, walletDto));
         }
 
         [HttpDelete("DeleteWallet/{id}")]
-        public IActionResult DeleteWallet(int id)
+        public async Task<IActionResult> DeleteWallet(int id)
         {
-            return Ok();
+            var deleted = await _walletRepository.DeleteWallet(id);
+
+            if (!deleted)
+                return BadRequest(ResponseMessage.Message("Unable to delete wallet", "error encountered while deleting the wallet", id));
+
+            return Ok(ResponseMessage.Message("Wallet successfully deleted", null, id));
         }
 
         [HttpPut("Update")]
-        public IActionResult UpdateWallet(CreateWalletDto walletDto)
+        public async Task<IActionResult> UpdateWallet(UpdateWalletDto walletDto)
         {
-            return Ok();
+            var wallet = _walletRepository.GetWalletById(walletDto.WalletId);
+
+            if (wallet == null)
+                return BadRequest(ResponseMessage.Message("Unable to update wallet", "invalid wallet id", walletDto));
+
+            wallet.CurrencyId = walletDto.CurrencyId;
+
+            var updated = await _walletRepository.UpdateWallet(wallet);
+
+            if (!updated)
+                return BadRequest(ResponseMessage.Message("Unable to update wallet", "error encountered while updating the wallet", walletDto));
+
+            return Ok(ResponseMessage.Message("Wallet successfully updated", null, walletDto));
         }
 
         [HttpGet("GetWalletDetail/{id}")]
         public IActionResult GetWallet(int id)
         {
-            return Ok();
+            var wallet = _walletRepository.GetWalletById(id);
+
+            if (wallet == null)
+                return BadRequest(ResponseMessage.Message("Wallet not found", "invalid wallet id", id));
+
+            return Ok(ResponseMessage.Message("Successful!", null, wallet));
         }
 
         [HttpPost("FundWallet")]
         public IActionResult FundWallet(FundingDto fundingDto)
         {
+            _walletRepository.FundWallet(fundingDto);
             return Ok();
         }
     }
