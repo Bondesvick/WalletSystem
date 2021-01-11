@@ -20,7 +20,7 @@ namespace WalletSystemAPI.Models
         [ForeignKey("DestinationId")]
         public Wallet Destination { get; set; }
 
-        public string DestinationId { get; set; }
+        public int DestinationId { get; set; }
 
         public bool IsApproved { get; set; }
     }

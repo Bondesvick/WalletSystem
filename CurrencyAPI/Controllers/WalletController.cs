@@ -44,5 +44,11 @@ namespace WalletSystemAPI.Controllers
         {
             return Ok();
         }
+
+        [HttpPost("FundWallet/{id}")]
+        public IActionResult FundWallet(int id)
+        {
+            return Ok();
+        }
     }
 }
