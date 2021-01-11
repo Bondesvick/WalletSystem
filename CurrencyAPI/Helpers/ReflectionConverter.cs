@@ -14,6 +14,11 @@ namespace WalletSystemAPI.Helpers
             return property?.GetValue(source, null);
         }
 
+        public static string GetPropertyName(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.Name;
+        }
+
         public static List<PropertyInfo> GetPropertyValues(object source)
         {
             PropertyInfo[] property = source.GetType().GetProperties();
