@@ -25,10 +25,6 @@ namespace WalletSystemAPI.Dtos
         public string PhoneNumber { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string Type { get; set; }
-
-        [Required]
         public string Password { get; set; }
 
         [Required]

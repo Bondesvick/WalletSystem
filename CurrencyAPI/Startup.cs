@@ -97,7 +97,7 @@ namespace CurrencyAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             if (env.IsDevelopment())
             {

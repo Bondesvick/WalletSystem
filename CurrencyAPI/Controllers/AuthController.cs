@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
 
@@ -22,19 +23,46 @@ namespace WalletSystemAPI.Controllers
         }
 
         [HttpPost("SignUp")]
-        public IActionResult SignUp(RegisterUserDto userToRegisterUserDto)
+        public async Task<IActionResult> SignUp(RegisterUserDto userToRegisterUserDto)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Make sure the required fields are filled properly", ModelState));
+
+            var checkUser = await _userRepository.GetUserByEmail(userToRegisterUserDto.Email);
+            if (checkUser != null)
+                return BadRequest(ResponseMessage.Message("User with the email already exist"));
+
+            User user = new User()
+            {
+                FirstName = userToRegisterUserDto.FirstName,
+                LastName = userToRegisterUserDto.LastName,
+                UserName = userToRegisterUserDto.Email,
+                Email = userToRegisterUserDto.Email,
+                MainCurrencyId = userToRegisterUserDto.MainCurrencyId,
+                PhoneNumber = userToRegisterUserDto.PhoneNumber,
+                Address = userToRegisterUserDto.Address
+            };
+
+            var response = await _userRepository.RegisterUser(user, userToRegisterUserDto.Password);
+            if (response)
+                return BadRequest(ResponseMessage.Message("Unable register User"));
+
+            return Ok(ResponseMessage.Message("Account Created", null, userToRegisterUserDto));
         }
 
         [HttpPost("LogIn")]
-        public IActionResult Login(UserToLoginDto userToLoginDto)
+        public async Task<IActionResult> Login(UserToLoginDto userToLoginDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ResponseMessage.Message("Fill out all the files", ModelState));
 
-            _userRepository.LoginUser(userToLoginDto);
-            return Ok();
+            var checkUser = await _userRepository.GetUserByEmail(userToLoginDto.Email);
+            if (checkUser == null)
+                return BadRequest(ResponseMessage.Message("User does not exist"));
+
+            var token = await _userRepository.LoginUser(userToLoginDto);
+
+            return Ok(ResponseMessage.Message("You account has been logged-in", null, token));
         }
 
         [HttpGet("{id}")]
