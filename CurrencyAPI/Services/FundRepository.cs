@@ -64,5 +64,15 @@ namespace WalletSystemAPI.Services
         {
             return _context.Fundings.ToList();
         }
+
+        public List<Funding> GetUnApprovedFundings()
+        {
+            return _context.Fundings.Where(f => !f.IsApproved).ToList();
+        }
+
+        public List<Funding> GetApprovedFundings()
+        {
+            return _context.Fundings.Where(f => f.IsApproved).ToList();
+        }
     }
 }

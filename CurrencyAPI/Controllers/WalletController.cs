@@ -6,7 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.Wallet;
+using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
+using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Controllers
 {
@@ -24,6 +26,16 @@ namespace WalletSystemAPI.Controllers
         [HttpPost("CreateWallet")]
         public IActionResult CreateWallet(CreateWalletDto walletDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState));
+
+            var wallet = new Wallet()
+            {
+                CurrencyId = walletDto.CurrencyId,
+                OwnerId = walletDto.OwnerId
+            };
+            var created = _walletRepository.AddWallet(wallet);
+
             return Ok();
         }
 
@@ -45,8 +57,8 @@ namespace WalletSystemAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("FundWallet/{id}")]
-        public IActionResult FundWallet(int id)
+        [HttpPost("FundWallet")]
+        public IActionResult FundWallet(FundingDto fundingDto)
         {
             return Ok();
         }

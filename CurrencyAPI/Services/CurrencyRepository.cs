@@ -35,6 +35,11 @@ namespace WalletSystemAPI.Services
             return _context.Currencies.FirstOrDefault(c => c.Id == id);
         }
 
+        public List<Currency> GetAllCurrencies()
+        {
+            return _context.Currencies.ToList();
+        }
+
         public bool AddCurrency(Currency currency)
         {
             try

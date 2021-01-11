@@ -16,5 +16,9 @@ namespace WalletSystemAPI.Interfaces
         bool DeleteFunding(int id);
 
         List<Funding> GetAllFundings();
+
+        List<Funding> GetUnApprovedFundings();
+
+        List<Funding> GetApprovedFundings();
     }
 }

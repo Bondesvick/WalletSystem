@@ -11,10 +11,22 @@ namespace WalletSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FundingController : ControllerBase
+    public class AdminController : ControllerBase
     {
-        public FundingController()
+        public AdminController()
         {
+        }
+
+        [HttpPost("ChangeUserMainCurrency")]
+        public IActionResult ChangeUserMainCurrency()
+        {
+            return Ok();
+        }
+
+        [HttpPost("ChangeUserAccountType")]
+        public IActionResult ChangeUserAccountType()
+        {
+            return Ok();
         }
 
         [HttpPost("ApproveFunding")]

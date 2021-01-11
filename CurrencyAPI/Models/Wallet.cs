@@ -14,7 +14,7 @@ namespace WalletSystemAPI.Models
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
 
-        public string CurrencyId { get; set; }
+        public int CurrencyId { get; set; }
 
         [ForeignKey("OwnerId")]
         public User Owner { get; set; }
