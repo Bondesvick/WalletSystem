@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Helpers;
@@ -82,6 +83,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You account has been logged-in", null, token));
         }
 
+        [Authorize]
         [HttpGet("GetUserDetail/{id}")]
         public IActionResult GetUser(string id)
         {

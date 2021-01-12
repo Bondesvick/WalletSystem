@@ -26,11 +26,15 @@ namespace WalletSystemAPI.Interfaces
 
         List<Wallet> GetWalletsByUserId(string ownerId);
 
+        Wallet GetUserMainCurrencyWallet(string userId);
+
         List<Wallet> GetAllWallets();
 
         Task<bool> FundWallet(FundingDto fundingDto);
 
         Task<bool> FundNoobWallet(FundingDto fundingDto);
+
+        bool CanWithdrawFromWallet(decimal balance, decimal? amount);
 
         Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto);
 

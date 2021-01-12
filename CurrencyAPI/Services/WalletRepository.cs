@@ -104,6 +104,11 @@ namespace WalletSystemAPI.Services
             return _context.Wallets.Where(w => w.OwnerId == ownerId).ToList();
         }
 
+        public Wallet GetUserMainCurrencyWallet(string userId)
+        {
+            return _context.Wallets.FirstOrDefault(w => w.OwnerId == userId && w.IsMain);
+        }
+
         public List<Wallet> GetAllWallets()
         {
             return _context.Wallets.ToList();
@@ -140,12 +145,22 @@ namespace WalletSystemAPI.Services
             return await _fundRepository.CreateFunding(fundingDto);
         }
 
+        public bool CanWithdrawFromWallet(decimal balance, decimal? amount)
+        {
+            return (balance - amount) >= 0;
+        }
+
         public async Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
             var wallet = GetWalletById(withdrawalDto.WalletId);
 
             if (wallet.CurrencyId == withdrawalDto.CurrencyId)
             {
+                if (!CanWithdrawFromWallet(wallet.Balance, withdrawalDto.Amount))
+                {
+                    return false;
+                }
+
                 wallet.Balance -= withdrawalDto.Amount;
 
                 _transactionRepository.CreateTransaction(TransactionType.Debit, withdrawalDto.Amount, withdrawalDto.WalletId,
@@ -157,6 +172,11 @@ namespace WalletSystemAPI.Services
                 var sourceCode = _currencyRepository.GetCurrencyCode(withdrawalDto.CurrencyId);
 
                 var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, withdrawalDto.Amount);
+
+                if (!CanWithdrawFromWallet(wallet.Balance, newAmount))
+                {
+                    return false;
+                }
 
                 wallet.Balance -= newAmount ?? 0;
 

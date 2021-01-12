@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using WalletSystemAPI.Dtos.Currency;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
@@ -24,6 +25,7 @@ namespace WalletSystemAPI.Controllers
             _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet("GetAllCurrencies")]
         public IActionResult GetAllCurrencies()
         {
