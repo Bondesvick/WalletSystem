@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Interfaces;
@@ -29,7 +30,8 @@ namespace WalletSystemAPI.Services
             {
                 DestinationId = fundingDto.WalletId,
                 CurrencyId = fundingDto.CurrencyId,
-                Amount = fundingDto.Amount
+                Amount = fundingDto.Amount,
+                IsApproved = false
             };
 
             try
@@ -62,17 +64,17 @@ namespace WalletSystemAPI.Services
 
         public List<Funding> GetAllFundings()
         {
-            return _context.Fundings.ToList();
+            return _context.Fundings.Include(f => f.Currency).ToList();
         }
 
         public List<Funding> GetUnApprovedFundings()
         {
-            return _context.Fundings.Where(f => !f.IsApproved).ToList();
+            return _context.Fundings.Include(f => f.Currency).Where(f => !f.IsApproved).ToList();
         }
 
         public List<Funding> GetApprovedFundings()
         {
-            return _context.Fundings.Where(f => f.IsApproved).ToList();
+            return _context.Fundings.Include(f => f.Currency).Where(f => f.IsApproved).ToList();
         }
     }
 }

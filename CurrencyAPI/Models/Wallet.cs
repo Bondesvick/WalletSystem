@@ -21,6 +21,8 @@ namespace WalletSystemAPI.Models
 
         public string OwnerId { get; set; }
 
+        public bool IsMain { get; set; }
+
         public IList<Transaction> Transactions { get; set; }
     }
 }

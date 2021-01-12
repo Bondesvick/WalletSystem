@@ -13,12 +13,6 @@ namespace WalletSystemAPI.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        [ForeignKey("MainCurrencyId")]
-        public Currency MainCurrency { get; set; }
-
-        [Required]
-        public int MainCurrencyId { get; set; }
-
         public string Address { get; set; }
 
         public ICollection<Wallet> Wallets { get; set; }

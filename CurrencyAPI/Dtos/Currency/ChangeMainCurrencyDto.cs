@@ -7,5 +7,7 @@ namespace WalletSystemAPI.Dtos.Currency
 {
     public class ChangeMainCurrencyDto
     {
+        public int OldMainCurrencyId { get; set; }
+        public int NewMainCurrencyId { get; set; }
     }
 }

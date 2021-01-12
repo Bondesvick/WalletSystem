@@ -91,7 +91,7 @@ namespace WalletSystemAPI.Services
 
         public Wallet GetWalletById(int id)
         {
-            return _context.Wallets.FirstOrDefault(w => w.Id == id);
+            return _context.Wallets.Include(w => w.Currency).FirstOrDefault(w => w.Id == id);
         }
 
         public List<Wallet> GetWalletsById(int id)

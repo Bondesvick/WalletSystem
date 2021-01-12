@@ -45,8 +45,10 @@ namespace WalletSystemAPI.Controllers
 
             var wallet = new Wallet()
             {
+                Balance = 0,
                 CurrencyId = walletDto.CurrencyId,
-                OwnerId = walletDto.OwnerId
+                OwnerId = walletDto.OwnerId,
+                IsMain = false
             };
 
             var created = _walletRepository.AddWallet(wallet);
@@ -129,6 +131,8 @@ namespace WalletSystemAPI.Controllers
 
                 if (!noobWalletFunded)
                     return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));
+
+                return Ok(ResponseMessage.Message("Successfully funded, waiting approval from an Admin", null, fundingDto));
             }
 
             var walletFunded = await _walletRepository.FundWallet(fundingDto);

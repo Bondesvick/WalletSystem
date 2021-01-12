@@ -54,7 +54,6 @@ namespace WalletSystemAPI.Data
                     LastName = "Nwike",
                     UserName = "victor@gmail.com",
                     Email = "victor@gmail.com",
-                    MainCurrencyId = 1,
                     PhoneNumber = "08165585587",
                     Address = "Sangotedo"
                 };
