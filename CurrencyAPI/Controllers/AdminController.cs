@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos.Funding;
 using WalletSystemAPI.Helpers;
+using WalletSystemAPI.Interfaces;
 
 namespace WalletSystemAPI.Controllers
 {
@@ -13,8 +14,11 @@ namespace WalletSystemAPI.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        public AdminController()
+        private readonly IFundRepository _fundRepository;
+
+        public AdminController(IFundRepository fundRepository)
         {
+            _fundRepository = fundRepository;
         }
 
         [HttpPost("ChangeUserMainCurrency")]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace WalletSystemAPI.Models
         [ForeignKey("MainCurrencyId")]
         public Currency MainCurrency { get; set; }
 
+        [Required]
         public int MainCurrencyId { get; set; }
 
         public string Address { get; set; }

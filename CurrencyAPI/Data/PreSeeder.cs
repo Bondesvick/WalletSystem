@@ -40,7 +40,7 @@ namespace WalletSystemAPI.Data
                     var name = ReflectionConverter.GetPropertyName(rates[i]);
                     var value = ReflectionConverter.GetPropertyValue(request.Rates, name);
 
-                    context.Currencies.Add(new Currency { Id = i + 1, Code = name });
+                    context.Currencies.Add(new Currency { Code = name });
                     await context.SaveChangesAsync();
                 }
             }
@@ -59,7 +59,7 @@ namespace WalletSystemAPI.Data
                     Address = "Sangotedo"
                 };
 
-                var result = await userManager.CreateAsync(user, "01234Admin");
+                var result = await userManager.CreateAsync(user, "P@$$word1");
 
                 if (result.Succeeded)
                 {
