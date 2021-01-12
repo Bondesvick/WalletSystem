@@ -23,7 +23,7 @@ namespace WalletSystemAPI.Services
             return _context.Fundings.FirstOrDefault(f => f.Id == id);
         }
 
-        public bool CreateFunding(FundingDto fundingDto)
+        public async Task<bool> CreateFunding(FundingDto fundingDto)
         {
             Funding funding = new Funding()
             {
@@ -34,8 +34,8 @@ namespace WalletSystemAPI.Services
 
             try
             {
-                _context.Fundings.AddAsync(funding);
-                _context.SaveChangesAsync();
+                await _context.Fundings.AddAsync(funding);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch
@@ -44,14 +44,14 @@ namespace WalletSystemAPI.Services
             }
         }
 
-        public bool DeleteFunding(int id)
+        public async Task<bool> DeleteFunding(int id)
         {
             var funding = GetFundingById(id);
 
             try
             {
                 _context.Fundings.Remove(funding);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch

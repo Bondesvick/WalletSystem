@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.OpenApi.Models;
 using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Helpers;
@@ -17,17 +18,21 @@ namespace WalletSystemAPI.Controllers
     public class WalletController : ControllerBase
     {
         private readonly IWalletRepository _walletRepository;
+        private readonly ICurrencyRepository _currencyRepository;
+        private readonly IUserRepository _userRepository;
 
-        public WalletController(IWalletRepository walletRepository)
+        public WalletController(IWalletRepository walletRepository, ICurrencyRepository currencyRepository, IUserRepository userRepository)
         {
             _walletRepository = walletRepository;
+            _currencyRepository = currencyRepository;
+            _userRepository = userRepository;
         }
 
         [HttpPost("CreateWallet")]
         public IActionResult CreateWallet(CreateWalletDto walletDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState));
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, walletDto));
 
             var wallet = new Wallet()
             {
@@ -58,6 +63,9 @@ namespace WalletSystemAPI.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateWallet(UpdateWalletDto walletDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, walletDto));
+
             var wallet = _walletRepository.GetWalletById(walletDto.WalletId);
 
             if (wallet == null)
@@ -85,10 +93,68 @@ namespace WalletSystemAPI.Controllers
         }
 
         [HttpPost("FundWallet")]
-        public IActionResult FundWallet(FundingDto fundingDto)
+        public async Task<IActionResult> FundWallet(FundingDto fundingDto)
         {
-            _walletRepository.FundWallet(fundingDto);
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, fundingDto));
+
+            var currencyExist = _currencyRepository.CurrencyExist(fundingDto.CurrencyId);
+
+            if (!currencyExist)
+                return NotFound(ResponseMessage.Message("Currency Not found", "currency id provided is invalid", fundingDto));
+
+            var user = _userRepository.GetUserById(fundingDto.UserId);
+            var userRoles = await _userRepository.GetUserRoles(user);
+
+            if (userRoles.Contains("Noob"))
+            {
+                var noobWalletFunded = await _walletRepository.FundNoobWallet(fundingDto);
+
+                if (!noobWalletFunded)
+                    return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));
+            }
+
+            var walletFunded = await _walletRepository.FundWallet(fundingDto);
+
+            if (!walletFunded)
+                return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));
+
+            return Ok(ResponseMessage.Message("Wallet successfully funded", null, fundingDto));
+        }
+
+        [HttpPost("WithdrawFromWallet")]
+        public async Task<IActionResult> WithdrawFromWallet(WithdrawalDto withdrawalDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, withdrawalDto));
+
+            var currencyExist = _currencyRepository.CurrencyExist(withdrawalDto.CurrencyId);
+
+            if (!currencyExist)
+                return NotFound(ResponseMessage.Message("Currency Not found", "currency id provided is invalid", withdrawalDto));
+
+            var walletFunded = await _walletRepository.WithdrawFromWallet(withdrawalDto);
+
+            if (!walletFunded)
+                return BadRequest(ResponseMessage.Message("Unable to withdraw from wallet", "An error was encountered while trying to withdraw from the wallet", withdrawalDto));
+
+            return Ok(ResponseMessage.Message("You have successfully debited the walled", null, withdrawalDto));
+        }
+
+        [HttpGet]
+        public IActionResult GetAllMyWallets()
+        {
+            var myWallets = _walletRepository.GetAllMyWallets();
+
+            var wallets = myWallets.Select(w => new GetWalletDto()
+            {
+                WalletId = w.Id,
+                CurrencyCode = w.Currency.Code,
+                Balance = w.Balance,
+                OwnerId = w.OwnerId
+            }).ToList();
+
+            return Ok(ResponseMessage.Message("List of all wallets you own", null, wallets));
         }
     }
 }

@@ -28,7 +28,7 @@ namespace WalletSystemAPI.Interfaces
 
         Task<bool> FundWallet(FundingDto fundingDto);
 
-        Task<bool> FundNoobWallet(Funding funding);
+        Task<bool> FundNoobWallet(FundingDto fundingDto);
 
         Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto);
     }

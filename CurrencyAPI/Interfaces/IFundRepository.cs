@@ -7,13 +7,13 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Interfaces
 {
-    internal interface IFundRepository
+    public interface IFundRepository
     {
         Funding GetFundingById(int id);
 
-        bool CreateFunding(FundingDto fundingDto);
+        Task<bool> CreateFunding(FundingDto fundingDto);
 
-        bool DeleteFunding(int id);
+        Task<bool> DeleteFunding(int id);
 
         List<Funding> GetAllFundings();
 
