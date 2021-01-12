@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WalletSystemAPI.Dtos.Currency;
 using WalletSystemAPI.Dtos.Funding;
+using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
@@ -41,13 +43,26 @@ namespace WalletSystemAPI.Controllers
         }
 
         [HttpPost("ChangeUserMainCurrency")]
-        public IActionResult ChangeUserMainCurrency()
+        public async Task<IActionResult> ChangeUserMainCurrency(ChangeMainCurrencyDto changeMainCurrencyDto)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState));
+
+            var old = _walletRepository.GetWalletById(changeMainCurrencyDto.OldMainCurrencyWalletId);
+            var @new = _walletRepository.GetWalletById(changeMainCurrencyDto.NewMainCurrencyWalletId);
+
+            if (old == null || @new == null)
+                return BadRequest(ResponseMessage.Message("one of the ids entered is incorrect", "wallet to found", changeMainCurrencyDto));
+
+            var changed = await _walletRepository.ChangeMainCurrency(old, @new);
+            if (!changed)
+                return BadRequest(ResponseMessage.Message("Unable to change main currency", "error encountered while trying to save main currency", changeMainCurrencyDto));
+
+            return Ok(ResponseMessage.Message("Main currency changed successfully", null, changeMainCurrencyDto));
         }
 
         [HttpPost("ChangeUserAccountType")]
-        public IActionResult ChangeUserAccountType()
+        public IActionResult ChangeUserAccountType(ChangeUserAccountTypeDto changeUserAccountTypeDto)
         {
             return Ok();
         }
@@ -71,12 +86,13 @@ namespace WalletSystemAPI.Controllers
             };
 
             var funded = await _walletRepository.FundWallet(fundingDto);
+
             if (!funded)
                 return BadRequest(ResponseMessage.Message("Unable to fund account", "and error was encountered while trying to fund this account", approveFundingDto));
 
             await _fundRepository.DeleteFunding(approveFundingDto.FundingId);
 
-            return Ok();
+            return Ok(ResponseMessage.Message("Noob account funded", null, approveFundingDto));
         }
     }
 }

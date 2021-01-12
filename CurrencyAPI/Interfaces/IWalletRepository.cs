@@ -33,5 +33,7 @@ namespace WalletSystemAPI.Interfaces
         Task<bool> FundNoobWallet(FundingDto fundingDto);
 
         Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto);
+
+        Task<bool> ChangeMainCurrency(Wallet oldWallet, Wallet newWallet);
     }
 }

@@ -105,7 +105,8 @@ namespace WalletSystemAPI.Controllers
                 WalletId = wallet.Id,
                 CurrencyCode = wallet.Currency.Code,
                 Balance = wallet.Balance,
-                OwnerId = wallet.OwnerId
+                OwnerId = wallet.OwnerId,
+                IsMain = wallet.IsMain
             };
 
             return Ok(ResponseMessage.Message("Successful!", null, theWallet));
@@ -172,10 +173,28 @@ namespace WalletSystemAPI.Controllers
                 WalletId = w.Id,
                 CurrencyCode = w.Currency.Code,
                 Balance = w.Balance,
-                OwnerId = w.OwnerId
+                OwnerId = w.OwnerId,
+                IsMain = w.IsMain
             }).ToList();
 
             return Ok(ResponseMessage.Message("List of all wallets you own", null, wallets));
+        }
+
+        [HttpGet("GetWalletsByUserId/UserId")]
+        public IActionResult GetWalletsByUserId(string id)
+        {
+            var myWallets = _walletRepository.GetWalletsByUserId(id);
+
+            var wallets = myWallets.Select(w => new GetWalletDto()
+            {
+                WalletId = w.Id,
+                CurrencyCode = w.Currency.Code,
+                Balance = w.Balance,
+                OwnerId = w.OwnerId,
+                IsMain = w.IsMain
+            }).ToList();
+
+            return Ok(ResponseMessage.Message("List of all wallets owned by the user", null, wallets));
         }
     }
 }

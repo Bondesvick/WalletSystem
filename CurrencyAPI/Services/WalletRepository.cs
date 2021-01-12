@@ -165,5 +165,13 @@ namespace WalletSystemAPI.Services
 
             return await UpdateWallet(wallet);
         }
+
+        public async Task<bool> ChangeMainCurrency(Wallet oldWallet, Wallet newWallet)
+        {
+            oldWallet.IsMain = false;
+            newWallet.IsMain = true;
+
+            return await UpdateWallet(oldWallet) && await UpdateWallet(newWallet);
+        }
     }
 }
