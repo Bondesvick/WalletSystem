@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Interfaces
@@ -17,15 +18,19 @@ namespace WalletSystemAPI.Interfaces
 
         bool CheckWallet(int walletId);
 
+        List<Wallet> GetAllMyWallets();
+
         Wallet GetWalletById(int id);
 
-        List<Wallet> GwWalletsById(int id);
+        List<Wallet> GetWalletsById(int id);
+
+        List<Wallet> GetWalletsByUserId(string ownerId);
 
         List<Wallet> GetAllWallets();
 
         Task<bool> FundWallet(FundingDto fundingDto);
 
-        Task<bool> FundNoobWallet(Funding funding);
+        Task<bool> FundNoobWallet(FundingDto fundingDto);
 
         Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto);
     }

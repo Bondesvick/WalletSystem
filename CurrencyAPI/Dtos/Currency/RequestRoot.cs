@@ -1,4 +1,4 @@
-﻿namespace WalletSystemAPI.Dtos
+﻿namespace WalletSystemAPI.Dtos.Currency
 {
     public class RequestRoot
     {

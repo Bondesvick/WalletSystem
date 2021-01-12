@@ -12,7 +12,7 @@ namespace WalletSystemAPI.Models
 
         public Decimal Amount { get; set; }
 
-        public string CurrencyId { get; set; }
+        public int CurrencyId { get; set; }
 
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
@@ -20,7 +20,7 @@ namespace WalletSystemAPI.Models
         [ForeignKey("DestinationId")]
         public Wallet Destination { get; set; }
 
-        public string DestinationId { get; set; }
+        public int DestinationId { get; set; }
 
         public bool IsApproved { get; set; }
     }

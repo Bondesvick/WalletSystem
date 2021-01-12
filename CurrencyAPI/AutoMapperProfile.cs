@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using WalletSystemAPI.Dtos;
+using WalletSystemAPI.Dtos.Currency;
+using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI
@@ -9,6 +11,7 @@ namespace WalletSystemAPI
         public AutoMapperProfile()
         {
             CreateMap<User, GetUserDto>();
+            CreateMap<Currency, GetCurrencyDto>();
         }
     }
 }

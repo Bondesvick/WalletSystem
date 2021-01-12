@@ -6,13 +6,15 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Interfaces
 {
-    internal interface ICurrencyRepository
+    public interface ICurrencyRepository
     {
         string GetCurrencyCode(int currencyId);
 
         bool CurrencyExist(int currencyId);
 
         Currency GetCurrencyById(int id);
+
+        List<Currency> GetAllCurrencies();
 
         bool AddCurrency(Currency currency);
 
