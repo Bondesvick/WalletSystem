@@ -27,5 +27,7 @@ namespace WalletSystemAPI.Interfaces
         Task<bool> DeleteUser(string id);
 
         Task<IList<string>> GetUserRoles(User user);
+
+        Task<bool> ChangeUserRole(User user, string oldRole, string newRole);
     }
 }

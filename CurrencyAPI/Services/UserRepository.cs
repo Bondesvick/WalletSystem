@@ -90,5 +90,13 @@ namespace WalletSystemAPI.Services
         {
             return _userManager.GetRolesAsync(user);
         }
+
+        public async Task<bool> ChangeUserRole(User user, string oldRole, string newRole)
+        {
+            var removed = await _userManager.RemoveFromRoleAsync(user, oldRole);
+            var added = await _userManager.AddToRoleAsync(user, newRole);
+
+            return removed.Succeeded && added.Succeeded;
+        }
     }
 }

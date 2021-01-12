@@ -41,7 +41,7 @@ namespace WalletSystemAPI.Controllers
 
             if (userRoles.Contains("Noob") && userWallets.Count > 0)
                 return BadRequest(ResponseMessage.Message("Already has a wallet",
-                    "your account type is only allowed to have o wallet", walletDto));
+                    "your account type is only allowed to have one wallet", walletDto));
 
             var wallet = new Wallet()
             {
