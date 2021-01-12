@@ -96,7 +96,12 @@ namespace WalletSystemAPI.Services
 
         public List<Wallet> GetWalletsById(int id)
         {
-            return _context.Wallets.Where(w => w.Id == id).ToList();
+            return _context.Wallets.Include(w => w.Currency).Where(w => w.Id == id).ToList();
+        }
+
+        public List<Wallet> GetWalletsByUserId(string ownerId)
+        {
+            return _context.Wallets.Where(w => w.OwnerId == ownerId).ToList();
         }
 
         public List<Wallet> GetAllWallets()

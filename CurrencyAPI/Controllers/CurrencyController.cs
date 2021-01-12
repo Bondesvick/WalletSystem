@@ -24,7 +24,7 @@ namespace WalletSystemAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllCurrencies")]
         public IActionResult GetAllCurrencies()
         {
             var currencies = _currencyRepository.GetAllCurrencies();

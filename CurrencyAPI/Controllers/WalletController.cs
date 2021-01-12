@@ -29,10 +29,19 @@ namespace WalletSystemAPI.Controllers
         }
 
         [HttpPost("CreateWallet")]
-        public IActionResult CreateWallet(CreateWalletDto walletDto)
+        public async Task<IActionResult> CreateWallet(CreateWalletDto walletDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, walletDto));
+
+            var userWallets = _walletRepository.GetWalletsByUserId(walletDto.OwnerId);
+
+            var user = _userRepository.GetUserById(walletDto.OwnerId);
+            var userRoles = await _userRepository.GetUserRoles(user);
+
+            if (userRoles.Contains("Noob") && userWallets.Count > 0)
+                return BadRequest(ResponseMessage.Message("Already has a wallet",
+                    "your account type is only allowed to have o wallet", walletDto));
 
             var wallet = new Wallet()
             {
@@ -89,7 +98,15 @@ namespace WalletSystemAPI.Controllers
             if (wallet == null)
                 return BadRequest(ResponseMessage.Message("Wallet not found", "invalid wallet id", id));
 
-            return Ok(ResponseMessage.Message("Successful!", null, wallet));
+            var theWallet = new GetWalletDto()
+            {
+                WalletId = wallet.Id,
+                CurrencyCode = wallet.Currency.Code,
+                Balance = wallet.Balance,
+                OwnerId = wallet.OwnerId
+            };
+
+            return Ok(ResponseMessage.Message("Successful!", null, theWallet));
         }
 
         [HttpPost("FundWallet")]
@@ -141,7 +158,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You have successfully debited the walled", null, withdrawalDto));
         }
 
-        [HttpGet]
+        [HttpGet("GettAllMyWallets")]
         public IActionResult GetAllMyWallets()
         {
             var myWallets = _walletRepository.GetAllMyWallets();
