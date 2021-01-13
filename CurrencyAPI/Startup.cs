@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Reflection;
-using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;

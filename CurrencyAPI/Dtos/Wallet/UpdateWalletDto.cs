@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WalletSystemAPI.Dtos.Wallet
+﻿namespace WalletSystemAPI.Dtos.Wallet
 {
     /// <summary>
     ///

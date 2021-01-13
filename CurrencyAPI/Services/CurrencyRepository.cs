@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Internal;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Internal;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;

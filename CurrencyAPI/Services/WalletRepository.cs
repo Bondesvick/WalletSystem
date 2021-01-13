@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using WalletSystemAPI.Data;
-using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;

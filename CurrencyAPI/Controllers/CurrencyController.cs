@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using WalletSystemAPI.Dtos.Currency;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
