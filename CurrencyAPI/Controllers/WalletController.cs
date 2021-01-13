@@ -40,7 +40,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows logged in Elite or Noob account holders to create a wallet
         /// </summary>
         /// <param name="walletDto"></param>
         /// <returns></returns>
@@ -80,7 +80,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows logged in Elite or Noob account holders to delete their wallet
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -97,7 +97,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows logged in Elite or Noob account holders to update their wallet
         /// </summary>
         /// <param name="walletDto"></param>
         /// <returns></returns>
@@ -113,9 +113,7 @@ namespace WalletSystemAPI.Controllers
             if (wallet == null)
                 return BadRequest(ResponseMessage.Message("Unable to update wallet", "invalid wallet id", walletDto));
 
-            wallet.CurrencyId = walletDto.CurrencyId;
-
-            var updated = await _walletRepository.UpdateWallet(wallet);
+            var updated = await _walletRepository.UpdateWallet(walletDto);
 
             if (!updated)
                 return BadRequest(ResponseMessage.Message("Unable to update wallet", "error encountered while updating the wallet", walletDto));
@@ -124,7 +122,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows logged-in Admin account holders to get a wallet by its Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -150,7 +148,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows a user to fund a wallet
         /// </summary>
         /// <param name="fundingDto"></param>
         /// <returns></returns>
@@ -194,7 +192,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows only Elite or Noob account holder to fund his/her wallet
         /// </summary>
         /// <param name="withdrawalDto"></param>
         /// <returns></returns>
@@ -224,7 +222,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows Noob or Elite account holder to get all their wallet(s)
         /// </summary>
         /// <returns></returns>
         [Authorize(Roles = "Elite, Noob")]
@@ -246,7 +244,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Allows only Admin to get a particular wallet by its Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

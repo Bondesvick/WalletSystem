@@ -43,6 +43,13 @@ namespace WalletSystemAPI.Interfaces
         /// <summary>
         ///
         /// </summary>
+        /// <param name="updateWalletDto"></param>
+        /// <returns></returns>
+        Task<bool> UpdateWallet(UpdateWalletDto updateWalletDto);
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="walletId"></param>
         /// <returns></returns>
         bool CheckWallet(int walletId);

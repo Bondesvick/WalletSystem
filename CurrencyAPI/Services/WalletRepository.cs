@@ -115,6 +115,29 @@ namespace WalletSystemAPI.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="updateWalletDto"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateWallet(UpdateWalletDto updateWalletDto)
+        {
+            var walletToUpdate = GetWalletById(updateWalletDto.WalletId);
+
+            if (walletToUpdate.CurrencyId != updateWalletDto.CurrencyId)
+            {
+                var targetCode = _currencyRepository.GetCurrencyCode(updateWalletDto.CurrencyId);
+                var sourceCode = _currencyRepository.GetCurrencyCode(walletToUpdate.CurrencyId);
+
+                var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, walletToUpdate.Balance);
+
+                walletToUpdate.CurrencyId = updateWalletDto.CurrencyId;
+                walletToUpdate.Balance = newAmount ?? 0;
+            }
+
+            return await UpdateWallet(walletToUpdate);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="walletId"></param>
         /// <returns></returns>
         public bool CheckWallet(int walletId)
