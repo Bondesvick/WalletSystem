@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Helpers;
@@ -17,10 +18,12 @@ namespace WalletSystemAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IWalletRepository _walletRepository;
 
-        public AuthController(IUserRepository userRepository)
+        public AuthController(IUserRepository userRepository, IWalletRepository walletRepository)
         {
             _userRepository = userRepository;
+            _walletRepository = walletRepository;
         }
 
         [HttpPost("SignUp")]
@@ -28,6 +31,9 @@ namespace WalletSystemAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ResponseMessage.Message("Make sure the required fields are filled properly", ModelState));
+
+            if (userToRegisterUserDto.Role == "Admin" && (userToRegisterUserDto.Role != "Elite" || userToRegisterUserDto.Role != "Noob"))
+                return BadRequest(ResponseMessage.Message("Invalid User Role", "User role can only be Noob or Elite", userToRegisterUserDto));
 
             var checkUser = await _userRepository.GetUserByEmail(userToRegisterUserDto.Email);
             if (checkUser != null)
@@ -39,7 +45,6 @@ namespace WalletSystemAPI.Controllers
                 LastName = userToRegisterUserDto.LastName,
                 UserName = userToRegisterUserDto.Email,
                 Email = userToRegisterUserDto.Email,
-                MainCurrencyId = userToRegisterUserDto.MainCurrencyId,
                 PhoneNumber = userToRegisterUserDto.PhoneNumber,
                 Address = userToRegisterUserDto.Address
             };
@@ -49,6 +54,17 @@ namespace WalletSystemAPI.Controllers
                 return BadRequest(ResponseMessage.Message("Unable register User"));
 
             _userRepository.AddUserToRole(user, userToRegisterUserDto.Role);
+
+            Wallet wallet = new Wallet()
+            {
+                Balance = 0,
+                CurrencyId = userToRegisterUserDto.MainCurrencyId,
+                IsMain = true,
+                OwnerId = user.Id
+            };
+
+            var created = _walletRepository.AddWallet(wallet);
+
             return Ok(ResponseMessage.Message("Account Created", null, userToRegisterUserDto));
         }
 
@@ -67,6 +83,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You account has been logged-in", null, token));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetUserDetail/{id}")]
         public IActionResult GetUser(string id)
         {
@@ -78,6 +95,14 @@ namespace WalletSystemAPI.Controllers
             response.Success = true;
 
             return Ok(response);
+        }
+
+        [Authorize(Roles = "Elite, Noob")]
+        [HttpGet("GetMyDetails")]
+        public IActionResult GetMyDetails()
+        {
+            var myInfo = _userRepository.GetMyDetails();
+            return Ok(ResponseMessage.Message("My Profile Information", null, myInfo));
         }
     }
 }

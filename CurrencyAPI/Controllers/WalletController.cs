@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.Wallet;
@@ -13,6 +14,7 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class WalletController : ControllerBase
@@ -28,25 +30,30 @@ namespace WalletSystemAPI.Controllers
             _userRepository = userRepository;
         }
 
+        [Authorize(Roles = "Elite, Noob")]
         [HttpPost("CreateWallet")]
         public async Task<IActionResult> CreateWallet(CreateWalletDto walletDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, walletDto));
 
-            var userWallets = _walletRepository.GetWalletsByUserId(walletDto.OwnerId);
+            var loggedInUserId = _walletRepository.GetUserId();
 
-            var user = _userRepository.GetUserById(walletDto.OwnerId);
+            var userWallets = _walletRepository.GetWalletsByUserId(loggedInUserId);
+
+            var user = _userRepository.GetUserById(loggedInUserId);
             var userRoles = await _userRepository.GetUserRoles(user);
 
             if (userRoles.Contains("Noob") && userWallets.Count > 0)
                 return BadRequest(ResponseMessage.Message("Already has a wallet",
-                    "your account type is only allowed to have o wallet", walletDto));
+                    "your account type is only allowed to have one wallet", walletDto));
 
             var wallet = new Wallet()
             {
+                Balance = 0,
+                OwnerId = loggedInUserId,
                 CurrencyId = walletDto.CurrencyId,
-                OwnerId = walletDto.OwnerId
+                IsMain = false
             };
 
             var created = _walletRepository.AddWallet(wallet);
@@ -58,6 +65,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully created", null, walletDto));
         }
 
+        [Authorize(Roles = "Elite, Noob")]
         [HttpDelete("DeleteWallet/{id}")]
         public async Task<IActionResult> DeleteWallet(int id)
         {
@@ -69,6 +77,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully deleted", null, id));
         }
 
+        [Authorize]
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateWallet(UpdateWalletDto walletDto)
         {
@@ -90,6 +99,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully updated", null, walletDto));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetWalletDetail/{id}")]
         public IActionResult GetWallet(int id)
         {
@@ -103,12 +113,14 @@ namespace WalletSystemAPI.Controllers
                 WalletId = wallet.Id,
                 CurrencyCode = wallet.Currency.Code,
                 Balance = wallet.Balance,
-                OwnerId = wallet.OwnerId
+                OwnerId = wallet.OwnerId,
+                IsMain = wallet.IsMain
             };
 
             return Ok(ResponseMessage.Message("Successful!", null, theWallet));
         }
 
+        [Authorize]
         [HttpPost("FundWallet")]
         public async Task<IActionResult> FundWallet(FundingDto fundingDto)
         {
@@ -120,7 +132,13 @@ namespace WalletSystemAPI.Controllers
             if (!currencyExist)
                 return NotFound(ResponseMessage.Message("Currency Not found", "currency id provided is invalid", fundingDto));
 
+            var walletExist = _walletRepository.CheckWallet(fundingDto.WalletId);
+
+            if (!walletExist)
+                return NotFound(ResponseMessage.Message("Wallet Not found", "wallet id provided is invalid", fundingDto));
+
             var user = _userRepository.GetUserById(fundingDto.UserId);
+
             var userRoles = await _userRepository.GetUserRoles(user);
 
             if (userRoles.Contains("Noob"))
@@ -129,6 +147,8 @@ namespace WalletSystemAPI.Controllers
 
                 if (!noobWalletFunded)
                     return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));
+
+                return Ok(ResponseMessage.Message("Successfully funded, waiting approval from an Admin", null, fundingDto));
             }
 
             var walletFunded = await _walletRepository.FundWallet(fundingDto);
@@ -139,6 +159,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully funded", null, fundingDto));
         }
 
+        [Authorize(Roles = "Elite, Noob")]
         [HttpPost("WithdrawFromWallet")]
         public async Task<IActionResult> WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
@@ -150,15 +171,21 @@ namespace WalletSystemAPI.Controllers
             if (!currencyExist)
                 return NotFound(ResponseMessage.Message("Currency Not found", "currency id provided is invalid", withdrawalDto));
 
-            var walletFunded = await _walletRepository.WithdrawFromWallet(withdrawalDto);
+            var walletExist = _walletRepository.CheckWallet(withdrawalDto.WalletId);
 
-            if (!walletFunded)
+            if (!walletExist)
+                return NotFound(ResponseMessage.Message("Wallet Not found", "wallet id provided is invalid", withdrawalDto));
+
+            var walletDebited = await _walletRepository.WithdrawFromWallet(withdrawalDto);
+
+            if (!walletDebited)
                 return BadRequest(ResponseMessage.Message("Unable to withdraw from wallet", "An error was encountered while trying to withdraw from the wallet", withdrawalDto));
 
             return Ok(ResponseMessage.Message("You have successfully debited the walled", null, withdrawalDto));
         }
 
-        [HttpGet("GettAllMyWallets")]
+        [Authorize(Roles = "Elite, Noob")]
+        [HttpGet("GetAllMyWallets")]
         public IActionResult GetAllMyWallets()
         {
             var myWallets = _walletRepository.GetAllMyWallets();
@@ -168,10 +195,29 @@ namespace WalletSystemAPI.Controllers
                 WalletId = w.Id,
                 CurrencyCode = w.Currency.Code,
                 Balance = w.Balance,
-                OwnerId = w.OwnerId
+                OwnerId = w.OwnerId,
+                IsMain = w.IsMain
             }).ToList();
 
             return Ok(ResponseMessage.Message("List of all wallets you own", null, wallets));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetWalletsByUserId/UserId")]
+        public IActionResult GetWalletsByUserId(string id)
+        {
+            var myWallets = _walletRepository.GetWalletsByUserId(id);
+
+            var wallets = myWallets.Select(w => new GetWalletDto()
+            {
+                WalletId = w.Id,
+                CurrencyCode = w.Currency.Code,
+                Balance = w.Balance,
+                OwnerId = w.OwnerId,
+                IsMain = w.IsMain
+            }).ToList();
+
+            return Ok(ResponseMessage.Message("List of all wallets owned by the user", null, wallets));
         }
     }
 }

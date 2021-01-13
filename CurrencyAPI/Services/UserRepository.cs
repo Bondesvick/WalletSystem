@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +25,9 @@ namespace WalletSystemAPI.Services
         private readonly SignInManager<User> _signManager;
         private readonly ILogger<UserRepository> _logger;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserRepository(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UserRepository> logger, IMapper mapper)
+        public UserRepository(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UserRepository> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _config = configuration;
             _logger = logger;
@@ -32,7 +35,10 @@ namespace WalletSystemAPI.Services
             _userManager = serviceProvider.GetRequiredService<UserManager<User>>();
             _signManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         public GetUserDto MapUser(string id)
         {
@@ -40,6 +46,11 @@ namespace WalletSystemAPI.Services
             var userToReturn = _mapper.Map<GetUserDto>(user);
 
             return userToReturn;
+        }
+
+        public GetUserDto GetMyDetails()
+        {
+            return MapUser(GetUserId());
         }
 
         public User GetUserById(string id)
@@ -89,6 +100,14 @@ namespace WalletSystemAPI.Services
         public Task<IList<string>> GetUserRoles(User user)
         {
             return _userManager.GetRolesAsync(user);
+        }
+
+        public async Task<bool> ChangeUserRole(User user, string oldRole, string newRole)
+        {
+            var removed = await _userManager.RemoveFromRoleAsync(user, oldRole);
+            var added = await _userManager.AddToRoleAsync(user, newRole);
+
+            return removed.Succeeded && added.Succeeded;
         }
     }
 }

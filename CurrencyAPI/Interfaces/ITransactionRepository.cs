@@ -8,6 +8,8 @@ namespace WalletSystemAPI.Interfaces
 {
     public interface ITransactionRepository
     {
+        List<Transaction> GetMyTransactions();
+
         bool CreateTransaction(TransactionType type, decimal amount, int walletId, int currencyId);
 
         bool DeleteTransaction(int id);

@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
@@ -11,10 +14,19 @@ namespace WalletSystemAPI.Services
     public class TransactionRepository : ITransactionRepository
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TransactionRepository(DataContext context)
+        public TransactionRepository(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        public List<Transaction> GetMyTransactions()
+        {
+            return _context.Transactions.Include(t => t.Wallet).Where(t => t.Wallet.OwnerId == GetUserId()).ToList();
         }
 
         public bool CreateTransaction(TransactionType type, decimal amount, int walletId, int currencyId)

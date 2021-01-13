@@ -12,6 +12,8 @@ namespace WalletSystemAPI.Interfaces
     {
         public GetUserDto MapUser(string id);
 
+        GetUserDto GetMyDetails();
+
         User GetUserById(string id);
 
         Task<User> GetUserByEmail(string email);
@@ -27,5 +29,7 @@ namespace WalletSystemAPI.Interfaces
         Task<bool> DeleteUser(string id);
 
         Task<IList<string>> GetUserRoles(User user);
+
+        Task<bool> ChangeUserRole(User user, string oldRole, string newRole);
     }
 }

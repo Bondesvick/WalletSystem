@@ -21,14 +21,16 @@ namespace WalletSystemAPI.Services
         private readonly IFundRepository _fundRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserRepository _userRepository;
 
-        public WalletRepository(DataContext context, ICurrencyRepository currencyRepository, IFundRepository fundRepository, ITransactionRepository transactionRepository, IHttpContextAccessor httpContextAccessor)
+        public WalletRepository(DataContext context, ICurrencyRepository currencyRepository, IFundRepository fundRepository, ITransactionRepository transactionRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
             _context = context;
             _currencyRepository = currencyRepository;
             _fundRepository = fundRepository;
             _transactionRepository = transactionRepository;
             _httpContextAccessor = httpContextAccessor;
+            _userRepository = userRepository;
         }
 
         public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -91,7 +93,7 @@ namespace WalletSystemAPI.Services
 
         public Wallet GetWalletById(int id)
         {
-            return _context.Wallets.FirstOrDefault(w => w.Id == id);
+            return _context.Wallets.Include(w => w.Currency).FirstOrDefault(w => w.Id == id);
         }
 
         public List<Wallet> GetWalletsById(int id)
@@ -102,6 +104,11 @@ namespace WalletSystemAPI.Services
         public List<Wallet> GetWalletsByUserId(string ownerId)
         {
             return _context.Wallets.Where(w => w.OwnerId == ownerId).ToList();
+        }
+
+        public Wallet GetUserMainCurrencyWallet(string userId)
+        {
+            return _context.Wallets.FirstOrDefault(w => w.OwnerId == userId && w.IsMain);
         }
 
         public List<Wallet> GetAllWallets()
@@ -122,6 +129,9 @@ namespace WalletSystemAPI.Services
             }
             else
             {
+                var user = _userRepository.GetUserById(fundingDto.UserId);
+                var roles = await _userRepository.GetUserRoles(user);
+
                 var targetCode = _currencyRepository.GetCurrencyCode(wallet.CurrencyId);
                 var sourceCode = _currencyRepository.GetCurrencyCode(fundingDto.CurrencyId);
 
@@ -140,12 +150,38 @@ namespace WalletSystemAPI.Services
             return await _fundRepository.CreateFunding(fundingDto);
         }
 
+        public bool CanWithdrawFromWallet(decimal balance, decimal? amount)
+        {
+            return (balance - amount) >= 0;
+        }
+
+        public async Task<bool> WithdrawFromMain(string userId, decimal amount)
+        {
+            var mainWallet = GetUserMainCurrencyWallet(userId);
+
+            if (!CanWithdrawFromWallet(mainWallet.Balance, amount))
+            {
+                return false;
+            }
+
+            mainWallet.Balance -= amount;
+
+            return await UpdateWallet(mainWallet);
+        }
+
         public async Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
             var wallet = GetWalletById(withdrawalDto.WalletId);
 
+            var user = _userRepository.GetUserById(withdrawalDto.UserId);
+            var roles = await _userRepository.GetUserRoles(user);
+
             if (wallet.CurrencyId == withdrawalDto.CurrencyId)
             {
+                if (!CanWithdrawFromWallet(wallet.Balance, withdrawalDto.Amount))
+                {
+                    return false;
+                }
                 wallet.Balance -= withdrawalDto.Amount;
 
                 _transactionRepository.CreateTransaction(TransactionType.Debit, withdrawalDto.Amount, withdrawalDto.WalletId,
@@ -158,12 +194,25 @@ namespace WalletSystemAPI.Services
 
                 var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, withdrawalDto.Amount);
 
+                if (!CanWithdrawFromWallet(wallet.Balance, newAmount))
+                {
+                    return false;
+                }
+
                 wallet.Balance -= newAmount ?? 0;
 
                 _transactionRepository.CreateTransaction(TransactionType.Debit, newAmount ?? 0, withdrawalDto.WalletId, withdrawalDto.CurrencyId);
             }
 
             return await UpdateWallet(wallet);
+        }
+
+        public async Task<bool> ChangeMainCurrency(Wallet oldWallet, Wallet newWallet)
+        {
+            oldWallet.IsMain = false;
+            newWallet.IsMain = true;
+
+            return await UpdateWallet(oldWallet) && await UpdateWallet(newWallet);
         }
     }
 }
