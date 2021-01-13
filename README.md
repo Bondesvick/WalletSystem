@@ -1,7 +1,13 @@
 # Wallet System API
 
 ## A wallet system for a product used in multiple countries
-
+---
+### Technologies used:
+ 1. ASP.Net Core API
+ 3. C# programming Language
+ 4. EntityFrameworkCore ORM
+ 5. SqlLite Database
+---
 ##### To Start, navigate into "CurrencyAPI/CurrencyAPI" and Run:
 ```
 dotnet run  
