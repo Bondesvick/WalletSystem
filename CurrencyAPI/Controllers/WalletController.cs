@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.OpenApi.Models;
-using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
@@ -14,6 +9,9 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Controllers
 {
+    /// <summary>
+    ///
+    /// </summary>
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
@@ -23,6 +21,12 @@ namespace WalletSystemAPI.Controllers
         private readonly ICurrencyRepository _currencyRepository;
         private readonly IUserRepository _userRepository;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="walletRepository"></param>
+        /// <param name="currencyRepository"></param>
+        /// <param name="userRepository"></param>
         public WalletController(IWalletRepository walletRepository, ICurrencyRepository currencyRepository, IUserRepository userRepository)
         {
             _walletRepository = walletRepository;
@@ -30,6 +34,11 @@ namespace WalletSystemAPI.Controllers
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Allows logged in Elite or Noob account holders to create a wallet
+        /// </summary>
+        /// <param name="walletDto"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Elite, Noob")]
         [HttpPost("CreateWallet")]
         public async Task<IActionResult> CreateWallet(CreateWalletDto walletDto)
@@ -65,6 +74,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully created", null, walletDto));
         }
 
+        /// <summary>
+        /// Allows logged in Elite or Noob account holders to delete their wallet
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Elite, Noob")]
         [HttpDelete("DeleteWallet/{id}")]
         public async Task<IActionResult> DeleteWallet(int id)
@@ -77,6 +91,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully deleted", null, id));
         }
 
+        /// <summary>
+        /// Allows logged in Elite or Noob account holders to update their wallet
+        /// </summary>
+        /// <param name="walletDto"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateWallet(UpdateWalletDto walletDto)
@@ -89,9 +108,7 @@ namespace WalletSystemAPI.Controllers
             if (wallet == null)
                 return BadRequest(ResponseMessage.Message("Unable to update wallet", "invalid wallet id", walletDto));
 
-            wallet.CurrencyId = walletDto.CurrencyId;
-
-            var updated = await _walletRepository.UpdateWallet(wallet);
+            var updated = await _walletRepository.UpdateWallet(walletDto);
 
             if (!updated)
                 return BadRequest(ResponseMessage.Message("Unable to update wallet", "error encountered while updating the wallet", walletDto));
@@ -99,6 +116,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully updated", null, walletDto));
         }
 
+        /// <summary>
+        /// Allows logged-in Admin account holders to get a wallet by its Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetWalletDetail/{id}")]
         public IActionResult GetWallet(int id)
@@ -120,6 +142,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Successful!", null, theWallet));
         }
 
+        /// <summary>
+        /// Allows a user to fund a wallet
+        /// </summary>
+        /// <param name="fundingDto"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("FundWallet")]
         public async Task<IActionResult> FundWallet(FundingDto fundingDto)
@@ -159,6 +186,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Wallet successfully funded", null, fundingDto));
         }
 
+        /// <summary>
+        /// Allows only Elite or Noob account holder to fund his/her wallet
+        /// </summary>
+        /// <param name="withdrawalDto"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Elite, Noob")]
         [HttpPost("WithdrawFromWallet")]
         public async Task<IActionResult> WithdrawFromWallet(WithdrawalDto withdrawalDto)
@@ -184,6 +216,10 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You have successfully debited the walled", null, withdrawalDto));
         }
 
+        /// <summary>
+        /// Allows Noob or Elite account holder to get all their wallet(s)
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Elite, Noob")]
         [HttpGet("GetAllMyWallets")]
         public IActionResult GetAllMyWallets()
@@ -202,6 +238,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("List of all wallets you own", null, wallets));
         }
 
+        /// <summary>
+        /// Allows only Admin to get a particular wallet by its Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetWalletsByUserId/UserId")]
         public IActionResult GetWalletsByUserId(string id)

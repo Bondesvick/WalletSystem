@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using WalletSystemAPI.Dtos.Currency;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
 
 namespace WalletSystemAPI.Controllers
 {
+    /// <summary>
+    ///
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class CurrencyController : ControllerBase
@@ -19,13 +17,21 @@ namespace WalletSystemAPI.Controllers
         private readonly ICurrencyRepository _currencyRepository;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="currencyRepository"></param>
+        /// <param name="mapper"></param>
         public CurrencyController(ICurrencyRepository currencyRepository, IMapper mapper)
         {
             _currencyRepository = currencyRepository;
             _mapper = mapper;
         }
 
-        [Authorize]
+        /// <summary>
+        /// Get all country codes
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAllCurrencies")]
         public IActionResult GetAllCurrencies()
         {

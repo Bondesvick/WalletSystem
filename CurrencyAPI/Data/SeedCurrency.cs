@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Data
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class SeedCurrency : IEntityTypeConfiguration<Currency>
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="builder"></param>
         public async void Configure(EntityTypeBuilder<Currency> builder)
         {
             var request = await CurrencyRate.GetExchangeRate();

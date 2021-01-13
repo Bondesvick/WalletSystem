@@ -1,10 +1,17 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace WalletSystemAPI.Migrations
 {
+    /// <summary>
+    ///
+    /// </summary>
     public partial class first : Migration
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -321,6 +328,10 @@ namespace WalletSystemAPI.Migrations
                 column: "OwnerId");
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

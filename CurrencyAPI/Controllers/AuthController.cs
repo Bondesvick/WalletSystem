@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using WalletSystemAPI.Dtos;
 using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
@@ -13,6 +8,9 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Controllers
 {
+    /// <summary>
+    ///
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -20,12 +18,22 @@ namespace WalletSystemAPI.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IWalletRepository _walletRepository;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userRepository"></param>
+        /// <param name="walletRepository"></param>
         public AuthController(IUserRepository userRepository, IWalletRepository walletRepository)
         {
             _userRepository = userRepository;
             _walletRepository = walletRepository;
         }
 
+        /// <summary>
+        /// New persons can create an account, passing the Id of Main Currency
+        /// </summary>
+        /// <param name="userToRegisterUserDto"></param>
+        /// <returns></returns>
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp(RegisterUserDto userToRegisterUserDto)
         {
@@ -68,6 +76,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Account Created", null, userToRegisterUserDto));
         }
 
+        /// <summary>
+        /// User with accounts can Log in
+        /// </summary>
+        /// <param name="userToLoginDto"></param>
+        /// <returns></returns>
         [HttpPost("LogIn")]
         public async Task<IActionResult> Login(UserToLoginDto userToLoginDto)
         {
@@ -83,6 +96,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You account has been logged-in", null, token));
         }
 
+        /// <summary>
+        /// Allows only logged-in admin to account details of any user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetUserDetail/{id}")]
         public IActionResult GetUser(string id)
@@ -97,7 +115,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Elite, Noob")]
+        /// <summary>
+        /// Allows any logged in user to get his/her account details
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         [HttpGet("GetMyDetails")]
         public IActionResult GetMyDetails()
         {

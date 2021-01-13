@@ -1,4 +1,3 @@
-using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using WalletSystemAPI.Data;
 using WalletSystemAPI.Interfaces;
 using WalletSystemAPI.Models;
@@ -18,15 +21,29 @@ using WalletSystemAPI.Services;
 
 namespace WalletSystemAPI
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="services"></param>
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -63,6 +80,12 @@ namespace WalletSystemAPI
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallet System", Version = "v1" });
+
+                var xmlFilePath = Path.Combine(AppContext.BaseDirectory,
+                    $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+
+                c.IncludeXmlComments(xmlFilePath);
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -89,6 +112,14 @@ namespace WalletSystemAPI
             });
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="context"></param>
+        /// <param name="roleManager"></param>
+        /// <param name="userManager"></param>
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {

@@ -1,16 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WalletSystemAPI.Models
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class Currency
     {
+        /// <summary>
+        ///
+        /// </summary>
         [Key]
         public int Id { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
         [Required]
         public string Code { get; set; }
     }

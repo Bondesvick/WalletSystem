@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WalletSystemAPI.Dtos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using WalletSystemAPI.Dtos.User;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
@@ -17,6 +16,9 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Services
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class UserRepository : IUserRepository
     {
         private readonly IConfiguration _config;
@@ -27,6 +29,14 @@ namespace WalletSystemAPI.Services
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="serviceProvider"></param>
+        /// <param name="logger"></param>
+        /// <param name="mapper"></param>
+        /// <param name="httpContextAccessor"></param>
         public UserRepository(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UserRepository> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _config = configuration;
@@ -38,8 +48,17 @@ namespace WalletSystemAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public GetUserDto MapUser(string id)
         {
             var user = GetUserById(id);
@@ -48,37 +67,71 @@ namespace WalletSystemAPI.Services
             return userToReturn;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         public GetUserDto GetMyDetails()
         {
             return MapUser(GetUserId());
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public User GetUserById(string id)
         {
             return _userManager.Users.FirstOrDefault(user => user.Id == id);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public Task<User> GetUserByEmail(string email)
         {
             return _userManager.FindByEmailAsync(email);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public async Task<bool> RegisterUser(User user, string password)
         {
             var result = await _userManager.CreateAsync(user, password);
             return result.Succeeded;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="role"></param>
         public void AddUserToRole(User user, string role)
         {
             _userManager.AddToRoleAsync(user, role);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         public List<User> GetAllUsers()
         {
             return _userManager.Users.ToList();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userToLoginDto"></param>
+        /// <returns></returns>
         public async Task<string> LoginUser(UserToLoginDto userToLoginDto)
         {
             var user = await GetUserByEmail(userToLoginDto.Email);
@@ -89,6 +142,11 @@ namespace WalletSystemAPI.Services
             return JwtTokenConfig.GetToken(user, _config, roles);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteUser(string id)
         {
             var user = GetUserById(id);
@@ -97,11 +155,23 @@ namespace WalletSystemAPI.Services
             return result.Succeeded;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public Task<IList<string>> GetUserRoles(User user)
         {
             return _userManager.GetRolesAsync(user);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="oldRole"></param>
+        /// <param name="newRole"></param>
+        /// <returns></returns>
         public async Task<bool> ChangeUserRole(User user, string oldRole, string newRole)
         {
             var removed = await _userManager.RemoveFromRoleAsync(user, oldRole);
