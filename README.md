@@ -2,6 +2,16 @@
 
 ## A wallet system for a product used in multiple countries
 
+##### To Start, navigate into "CurrencyAPI/CurrencyAPI" and Run:
+```
+dotnet run  
+```
+
+----
+[Deployed site](https://walletsystemapi-heroku.herokuapp.com/swagger/index.html)
+----
+![GitHub Repo stars](https://img.shields.io/github/stars/Bondesvick/WalletSystem?style=flat-square)
+---
 ### This system would only be accessible to authenticated users.
 --------
 ### User types:
