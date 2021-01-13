@@ -10,7 +10,7 @@ dotnet run
 ----
 [Deployed site](https://walletsystemapi-heroku.herokuapp.com/swagger/index.html)
 ----
-![GitHub Repo stars](https://img.shields.io/github/stars/Bondesvick/WalletSystem?style=flat-square)
+![GitHub Repo stars](https://img.shields.io/github/stars/Bondesvick/WalletSystem?style=flat-square) ![GitHub branch checks state](https://img.shields.io/github/checks-status/Bondesvick/Bondesvick/master?style=social)
 ---
 ### This system would only be accessible to authenticated users.
 --------
