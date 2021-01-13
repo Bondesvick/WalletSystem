@@ -6,8 +6,14 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class AutoMapperProfile : Profile
     {
+        /// <summary>
+        ///
+        /// </summary>
         public AutoMapperProfile()
         {
             CreateMap<User, GetUserDto>();

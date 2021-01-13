@@ -9,8 +9,15 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Data
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class SeedCurrency : IEntityTypeConfiguration<Currency>
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="builder"></param>
         public async void Configure(EntityTypeBuilder<Currency> builder)
         {
             var request = await CurrencyRate.GetExchangeRate();

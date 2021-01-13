@@ -9,8 +9,18 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Helpers
 {
+    /// <summary>
+    ///
+    /// </summary>
     public static class JwtTokenConfig
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="_config"></param>
+        /// <param name="userRoles"></param>
+        /// <returns></returns>
         public static string GetToken(User user, IConfiguration _config,
             IList<string> userRoles)
         {

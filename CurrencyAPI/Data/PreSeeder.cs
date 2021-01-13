@@ -8,8 +8,18 @@ using WalletSystemAPI.Models;
 
 namespace WalletSystemAPI.Data
 {
+    /// <summary>
+    ///
+    /// </summary>
     public static class PreSeeder
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="roleManager"></param>
+        /// <param name="userManager"></param>
+        /// <returns></returns>
         public static async Task Seed(DataContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             // pre-load data to roles table

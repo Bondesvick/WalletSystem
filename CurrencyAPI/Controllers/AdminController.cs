@@ -14,6 +14,9 @@ using WalletSystemAPI.Interfaces;
 
 namespace WalletSystemAPI.Controllers
 {
+    /// <summary>
+    ///
+    /// </summary>
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
@@ -23,6 +26,12 @@ namespace WalletSystemAPI.Controllers
         private readonly IWalletRepository _walletRepository;
         private readonly IUserRepository _userRepository;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="fundRepository"></param>
+        /// <param name="walletRepository"></param>
+        /// <param name="userRepository"></param>
         public AdminController(IFundRepository fundRepository, IWalletRepository walletRepository, IUserRepository userRepository)
         {
             _fundRepository = fundRepository;
@@ -30,6 +39,10 @@ namespace WalletSystemAPI.Controllers
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Allows an admin to get all noob funds yet to be approved
+        /// </summary>
+        /// <returns>Admin Route</returns>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetUnApprovedFundings")]
         public IActionResult GetUnApprovedFundings()
@@ -47,6 +60,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("List of all Nood fundings yet to be approved", null, toFund));
         }
 
+        /// <summary>
+        /// Admin can change the main currency of a User
+        /// </summary>
+        /// <param name="changeMainCurrencyDto"></param>
+        /// <returns>Response</returns>
         [Authorize(Roles = "Admin")]
         [HttpPost("ChangeUserMainCurrency")]
         public async Task<IActionResult> ChangeUserMainCurrency(ChangeMainCurrencyDto changeMainCurrencyDto)
@@ -67,6 +85,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Main currency changed successfully", null, changeMainCurrencyDto));
         }
 
+        /// <summary>
+        /// Admin can Promote or demote an account type
+        /// </summary>
+        /// <param name="changeUserAccountTypeDto"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpPost("ChangeUserAccountType")]
         public async Task<IActionResult> ChangeUserAccountType(ChangeUserAccountTypeDto changeUserAccountTypeDto)
@@ -96,6 +119,11 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("Account type changed successfully", null, changeUserAccountTypeDto));
         }
 
+        /// <summary>
+        /// Admin can approve the funding of a Noob account holder
+        /// </summary>
+        /// <param name="approveFundingDto"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpPost("ApproveFunding")]
         public async Task<IActionResult> ApproveFunding(ApproveFundingDto approveFundingDto)

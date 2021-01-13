@@ -12,6 +12,10 @@ namespace WalletSystemAPI.Migrations
     [Migration("20210112232834_first")]
     partial class first
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

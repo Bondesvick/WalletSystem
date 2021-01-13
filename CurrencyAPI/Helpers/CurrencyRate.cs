@@ -11,8 +11,15 @@ using WalletSystemAPI.Dtos.Currency;
 
 namespace WalletSystemAPI.Helpers
 {
+    /// <summary>
+    ///
+    /// </summary>
     public static class CurrencyRate
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         public static async Task<RequestRoot> GetExchangeRate()
         {
             using HttpClient client = new HttpClient();
@@ -38,6 +45,13 @@ namespace WalletSystemAPI.Helpers
             return null;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sourceCode"></param>
+        /// <param name="targetCode"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public static async Task<decimal?> ConvertCurrency(string sourceCode, string targetCode, decimal amount)
         {
             var rate = await GetExchangeRate();
