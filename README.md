@@ -8,7 +8,7 @@ dotnet run
 ```
 
 ----
-[Deployed site](https://walletsystemapi-heroku.herokuapp.com/swagger/index.html)
+[Deployed Swagger Documentation](https://walletsystemapi-heroku.herokuapp.com/swagger/index.html)
 ----
 ![GitHub Repo stars](https://img.shields.io/github/stars/Bondesvick/WalletSystem?style=flat-square) ![GitHub branch checks state](https://img.shields.io/github/checks-status/Bondesvick/Bondesvick/master?style=social)
 ---
