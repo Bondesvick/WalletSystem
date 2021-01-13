@@ -12,6 +12,8 @@ namespace WalletSystemAPI.Interfaces
     {
         public GetUserDto MapUser(string id);
 
+        GetUserDto GetMyDetails();
+
         User GetUserById(string id);
 
         Task<User> GetUserByEmail(string email);

@@ -78,7 +78,7 @@ namespace WalletSystemAPI.Controllers
             if (user == null)
                 return BadRequest(ResponseMessage.Message("Invalid user Id", "user with the id was not found", changeUserAccountTypeDto));
 
-            if (changeUserAccountTypeDto.NewType != "Noob" || changeUserAccountTypeDto.NewType != "Elite")
+            if (changeUserAccountTypeDto.NewType != "Noob" && changeUserAccountTypeDto.NewType != "Elite")
                 return BadRequest(ResponseMessage.Message("Invalid User Role", "User role can only be Noob or Elite", changeUserAccountTypeDto));
 
             var roles = await _userRepository.GetUserRoles(user);

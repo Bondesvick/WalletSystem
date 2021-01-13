@@ -10,6 +10,8 @@ namespace WalletSystemAPI.Interfaces
 {
     public interface IWalletRepository
     {
+        public string GetUserId();
+
         bool AddWallet(Wallet wallet);
 
         Task<bool> DeleteWallet(int id);

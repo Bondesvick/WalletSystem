@@ -37,9 +37,11 @@ namespace WalletSystemAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, walletDto));
 
-            var userWallets = _walletRepository.GetWalletsByUserId(walletDto.OwnerId);
+            var loggedInUserId = _walletRepository.GetUserId();
 
-            var user = _userRepository.GetUserById(walletDto.OwnerId);
+            var userWallets = _walletRepository.GetWalletsByUserId(loggedInUserId);
+
+            var user = _userRepository.GetUserById(loggedInUserId);
             var userRoles = await _userRepository.GetUserRoles(user);
 
             if (userRoles.Contains("Noob") && userWallets.Count > 0)
@@ -49,8 +51,8 @@ namespace WalletSystemAPI.Controllers
             var wallet = new Wallet()
             {
                 Balance = 0,
+                OwnerId = loggedInUserId,
                 CurrencyId = walletDto.CurrencyId,
-                OwnerId = walletDto.OwnerId,
                 IsMain = false
             };
 

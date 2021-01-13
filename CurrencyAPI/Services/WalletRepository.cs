@@ -21,14 +21,16 @@ namespace WalletSystemAPI.Services
         private readonly IFundRepository _fundRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserRepository _userRepository;
 
-        public WalletRepository(DataContext context, ICurrencyRepository currencyRepository, IFundRepository fundRepository, ITransactionRepository transactionRepository, IHttpContextAccessor httpContextAccessor)
+        public WalletRepository(DataContext context, ICurrencyRepository currencyRepository, IFundRepository fundRepository, ITransactionRepository transactionRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
             _context = context;
             _currencyRepository = currencyRepository;
             _fundRepository = fundRepository;
             _transactionRepository = transactionRepository;
             _httpContextAccessor = httpContextAccessor;
+            _userRepository = userRepository;
         }
 
         public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -127,6 +129,9 @@ namespace WalletSystemAPI.Services
             }
             else
             {
+                var user = _userRepository.GetUserById(fundingDto.UserId);
+                var roles = await _userRepository.GetUserRoles(user);
+
                 var targetCode = _currencyRepository.GetCurrencyCode(wallet.CurrencyId);
                 var sourceCode = _currencyRepository.GetCurrencyCode(fundingDto.CurrencyId);
 
@@ -150,9 +155,26 @@ namespace WalletSystemAPI.Services
             return (balance - amount) >= 0;
         }
 
+        public async Task<bool> WithdrawFromMain(string userId, decimal amount)
+        {
+            var mainWallet = GetUserMainCurrencyWallet(userId);
+
+            if (!CanWithdrawFromWallet(mainWallet.Balance, amount))
+            {
+                return false;
+            }
+
+            mainWallet.Balance -= amount;
+
+            return await UpdateWallet(mainWallet);
+        }
+
         public async Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
             var wallet = GetWalletById(withdrawalDto.WalletId);
+
+            var user = _userRepository.GetUserById(withdrawalDto.UserId);
+            var roles = await _userRepository.GetUserRoles(user);
 
             if (wallet.CurrencyId == withdrawalDto.CurrencyId)
             {
@@ -160,7 +182,6 @@ namespace WalletSystemAPI.Services
                 {
                     return false;
                 }
-
                 wallet.Balance -= withdrawalDto.Amount;
 
                 _transactionRepository.CreateTransaction(TransactionType.Debit, withdrawalDto.Amount, withdrawalDto.WalletId,

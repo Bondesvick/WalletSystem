@@ -21,7 +21,7 @@ namespace WalletSystemAPI.Services
 
         public Funding GetFundingById(int id)
         {
-            return _context.Fundings.FirstOrDefault(f => f.Id == id);
+            return _context.Fundings.Include(f => f.Destination).FirstOrDefault(f => f.Id == id);
         }
 
         public async Task<bool> CreateFunding(FundingDto fundingDto)

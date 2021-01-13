@@ -32,7 +32,7 @@ namespace WalletSystemAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ResponseMessage.Message("Make sure the required fields are filled properly", ModelState));
 
-            if (userToRegisterUserDto.Role == "Admin" || userToRegisterUserDto.Role != "Elite" || userToRegisterUserDto.Role != "Nood")
+            if (userToRegisterUserDto.Role == "Admin" && (userToRegisterUserDto.Role != "Elite" || userToRegisterUserDto.Role != "Noob"))
                 return BadRequest(ResponseMessage.Message("Invalid User Role", "User role can only be Noob or Elite", userToRegisterUserDto));
 
             var checkUser = await _userRepository.GetUserByEmail(userToRegisterUserDto.Email);
@@ -83,7 +83,7 @@ namespace WalletSystemAPI.Controllers
             return Ok(ResponseMessage.Message("You account has been logged-in", null, token));
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetUserDetail/{id}")]
         public IActionResult GetUser(string id)
         {
@@ -95,6 +95,14 @@ namespace WalletSystemAPI.Controllers
             response.Success = true;
 
             return Ok(response);
+        }
+
+        [Authorize(Roles = "Elite, Noob")]
+        [HttpGet("GetMyDetails")]
+        public IActionResult GetMyDetails()
+        {
+            var myInfo = _userRepository.GetMyDetails();
+            return Ok(ResponseMessage.Message("My Profile Information", null, myInfo));
         }
     }
 }
