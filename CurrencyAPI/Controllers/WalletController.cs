@@ -96,7 +96,7 @@ namespace WalletSystemAPI.Controllers
         /// </summary>
         /// <param name="walletDto"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "Admin, Noob")]
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateWallet(UpdateWalletDto walletDto)
         {
@@ -107,6 +107,11 @@ namespace WalletSystemAPI.Controllers
 
             if (wallet == null)
                 return BadRequest(ResponseMessage.Message("Unable to update wallet", "invalid wallet id", walletDto));
+
+            var loggedInUserId = _walletRepository.GetUserId();
+
+            if (wallet.OwnerId != loggedInUserId)
+                return BadRequest(ResponseMessage.Message("Invalid", "This wallet is not owned by you", walletDto));
 
             var updated = await _walletRepository.UpdateWallet(walletDto);
 
