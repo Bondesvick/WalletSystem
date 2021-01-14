@@ -8,6 +8,11 @@
         /// <summary>
         ///
         /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string FirstName { get; set; }
 
         /// <summary>

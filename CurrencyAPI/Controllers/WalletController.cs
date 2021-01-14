@@ -164,7 +164,10 @@ namespace WalletSystemAPI.Controllers
             if (!walletExist)
                 return NotFound(ResponseMessage.Message("Wallet Not found", "wallet id provided is invalid", fundingDto));
 
-            var user = _userRepository.GetUserById(fundingDto.UserId);
+            var user = _userRepository.GetUserById(fundingDto.WalletOwnerId);
+
+            if (user == null)
+                return NotFound(ResponseMessage.Message("User Not found", "user id provided is invalid", fundingDto));
 
             var userRoles = await _userRepository.GetUserRoles(user);
 
@@ -187,7 +190,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        /// Allows only Elite or Noob account holder to fund his/her wallet
+        /// Allows only Elite or Noob account holder to debit their wallets
         /// </summary>
         /// <param name="withdrawalDto"></param>
         /// <returns></returns>
@@ -207,6 +210,12 @@ namespace WalletSystemAPI.Controllers
 
             if (!walletExist)
                 return NotFound(ResponseMessage.Message("Wallet Not found", "wallet id provided is invalid", withdrawalDto));
+
+            var loggedInUserId = _walletRepository.GetUserId();
+            var userWallets = _walletRepository.GetWalletsByUserId(loggedInUserId);
+
+            if (userWallets.All(w => w.Id != withdrawalDto.WalletId))
+                return BadRequest(ResponseMessage.Message("Unable to withdraw from this wallet", "This wallet is not owned by you", withdrawalDto));
 
             var walletDebited = await _walletRepository.WithdrawFromWallet(withdrawalDto);
 
@@ -244,7 +253,7 @@ namespace WalletSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize(Roles = "Admin")]
-        [HttpGet("GetWalletsByUserId/UserId")]
+        [HttpGet("GetWalletsByUserId/{id}")]
         public IActionResult GetWalletsByUserId(string id)
         {
             var myWallets = _walletRepository.GetWalletsByUserId(id);
