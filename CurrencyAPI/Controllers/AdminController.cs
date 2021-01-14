@@ -14,7 +14,7 @@ namespace WalletSystemAPI.Controllers
     /// <summary>
     ///
     /// </summary>
-    //[Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -40,6 +40,7 @@ namespace WalletSystemAPI.Controllers
         /// Allows admins to get all User details
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllUsers")]
         public IActionResult GetAllUsers()
         {
@@ -52,6 +53,7 @@ namespace WalletSystemAPI.Controllers
         /// Allows only admins to get wallet infos
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllWallets")]
         public IActionResult GetAllWallets()
         {
