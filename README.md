@@ -17,6 +17,9 @@
    docker run -p 5000:80 wallet
    ```
   - OR Using dotnet command:
+     ```
+    dotnet restore  
+    ```
     ```
     dotnet run  
     ```
