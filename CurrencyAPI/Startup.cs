@@ -60,8 +60,18 @@ namespace WalletSystemAPI
                 options.UseSqlite(
                     Configuration.GetConnectionString("DbConn")));
 
-            services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<DataContext>();
+            //services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<DataContext>();
+
+            services.AddIdentity<User, IdentityRole>(option =>
+                    {
+                        option.Password.RequireDigit = false;
+                        option.Password.RequireLowercase = false;
+                        option.Password.RequireNonAlphanumeric = false;
+                        option.Password.RequireUppercase = false;
+                        option.SignIn.RequireConfirmedEmail = false;
+                    }
+                ).AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
