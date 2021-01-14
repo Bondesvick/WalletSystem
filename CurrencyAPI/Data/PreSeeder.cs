@@ -44,7 +44,7 @@ namespace WalletSystemAPI.Data
                 var request = await CurrencyRate.GetExchangeRate();
                 var rates = ReflectionConverter.GetPropertyValues(request.Rates);
 
-                for (int i = 0; i <= rates.Count; i++)
+                for (int i = 0; i < rates.Count; i++)
                 {
                     var name = ReflectionConverter.GetPropertyName(rates[i]);
                     var value = ReflectionConverter.GetPropertyValue(request.Rates, name);
@@ -61,13 +61,13 @@ namespace WalletSystemAPI.Data
                 {
                     FirstName = "Victor",
                     LastName = "Nwike",
-                    UserName = "victor@gmail.com",
-                    Email = "victor@gmail.com",
+                    UserName = "ugo@gmail.com",
+                    Email = "ugo@gmail.com",
                     PhoneNumber = "08165585587",
                     Address = "Sangotedo"
                 };
 
-                var result = await userManager.CreateAsync(user, "P@$$word1");
+                var result = await userManager.CreateAsync(user, "12345Admin");
 
                 if (result.Succeeded)
                 {
