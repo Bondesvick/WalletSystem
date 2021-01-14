@@ -32,6 +32,7 @@ namespace WalletSystemAPI.Controllers
         /// Get all country codes
         /// </summary>
         /// <returns></returns>
+        //[HttpGet(ApiRoutes.Posts.GetAllCurrencies)]
         [HttpGet("GetAllCurrencies")]
         public IActionResult GetAllCurrencies()
         {
