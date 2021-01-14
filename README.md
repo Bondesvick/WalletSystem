@@ -8,10 +8,23 @@
  4. EntityFrameworkCore ORM
  5. SqlLite Database
 ---
-##### To Start, navigate into "CurrencyAPI/CurrencyAPI" and Run:
-```
-dotnet run  
-```
+### To Start, navigate into "CurrencyAPI/CurrencyAPI" and Run:
+1. Using Docker:
+   ```
+   docker build -t wallet .
+   ```
+   ```
+   docker run -p 5000:80 wallet
+   ```
+  - OR Using dotnet command:
+    ```
+    dotnet run  
+    ```
+2. The open the link below in your browser:
+   ```
+   http://localhost:5000/swagger/index.html
+   ```
+   
 
 ----
 [Deployed Swagger Documentation](https://walletsystemapi-heroku.herokuapp.com/swagger/index.html)
