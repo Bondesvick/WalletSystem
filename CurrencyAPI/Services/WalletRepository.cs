@@ -219,7 +219,7 @@ namespace WalletSystemAPI.Services
             }
             else
             {
-                var user = _userRepository.GetUserById(fundingDto.UserId);
+                var user = _userRepository.GetUserById(fundingDto.WalletOwnerId);
                 var roles = await _userRepository.GetUserRoles(user);
 
                 var targetCode = _currencyRepository.GetCurrencyCode(wallet.CurrencyId);
@@ -284,9 +284,6 @@ namespace WalletSystemAPI.Services
         public async Task<bool> WithdrawFromWallet(WithdrawalDto withdrawalDto)
         {
             var wallet = GetWalletById(withdrawalDto.WalletId);
-
-            var user = _userRepository.GetUserById(withdrawalDto.UserId);
-            var roles = await _userRepository.GetUserRoles(user);
 
             if (wallet.CurrencyId == withdrawalDto.CurrencyId)
             {

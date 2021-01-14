@@ -14,7 +14,7 @@ namespace WalletSystemAPI.Controllers
     /// <summary>
     ///
     /// </summary>
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -34,6 +34,39 @@ namespace WalletSystemAPI.Controllers
             _fundRepository = fundRepository;
             _walletRepository = walletRepository;
             _userRepository = userRepository;
+        }
+
+        /// <summary>
+        /// Allows admins to get all User details
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllUsers")]
+        public IActionResult GetAllUsers()
+        {
+            var users = _userRepository.GetAllUsers();
+            var usersToReturn = users.Select(u => _userRepository.MapUser(u.Id)).ToList();
+            return Ok(ResponseMessage.Message("List of all users", null, usersToReturn));
+        }
+
+        /// <summary>
+        /// Allows only admins to get wallet infos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllWallets")]
+        public IActionResult GetAllWallets()
+        {
+            var allWallets = _walletRepository.GetAllWallets();
+
+            var wallets = allWallets.Select(w => new GetWalletDto()
+            {
+                WalletId = w.Id,
+                CurrencyCode = w.Currency.Code,
+                Balance = w.Balance,
+                OwnerId = w.OwnerId,
+                IsMain = w.IsMain
+            }).ToList();
+
+            return Ok(ResponseMessage.Message("List of all wallets", null, wallets));
         }
 
         /// <summary>
@@ -136,7 +169,7 @@ namespace WalletSystemAPI.Controllers
             {
                 Amount = funding.Amount,
                 CurrencyId = funding.CurrencyId,
-                UserId = funding.Destination.OwnerId,
+                WalletOwnerId = funding.Destination.OwnerId,
                 WalletId = funding.DestinationId
             };
 

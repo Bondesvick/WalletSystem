@@ -12,7 +12,7 @@ namespace WalletSystemAPI.Dtos.Wallet
         ///
         /// </summary>
         [Required]
-        public string UserId { get; set; }
+        public string WalletOwnerId { get; set; }
 
         /// <summary>
         ///

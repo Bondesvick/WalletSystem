@@ -10,10 +10,10 @@ namespace IntegrationTest.APIs
     [Collection(nameof(ApiTestCollection))]
     public class CurrencyTest
     {
-        private readonly CurrencyApiBroker currencyApiBroker;
+        //private readonly CurrencyApiBroker currencyApiBroker;
 
         [Fact]
-        public async Task ShouldFetchAllCurrency()
+        public void ShouldFetchAllCurrency()
         {
         }
     }

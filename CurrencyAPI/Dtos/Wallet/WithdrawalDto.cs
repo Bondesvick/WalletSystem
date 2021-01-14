@@ -12,12 +12,6 @@ namespace WalletSystemAPI.Dtos.Wallet
         ///
         /// </summary>
         [Required]
-        public string UserId { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        [Required]
         public int WalletId { get; set; }
 
         /// <summary>
