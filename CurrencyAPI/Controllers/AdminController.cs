@@ -110,6 +110,9 @@ namespace WalletSystemAPI.Controllers
             if (old == null || @new == null)
                 return BadRequest(ResponseMessage.Message("one of the ids entered is incorrect", "wallet to found", changeMainCurrencyDto));
 
+            if (old.OwnerId != @new.OwnerId)
+                return BadRequest(ResponseMessage.Message("Wallets user do not match", "Wallets does not belong to the same user", changeMainCurrencyDto));
+
             var changed = await _walletRepository.ChangeMainCurrency(old, @new);
             if (!changed)
                 return BadRequest(ResponseMessage.Message("Unable to change main currency", "error encountered while trying to save main currency", changeMainCurrencyDto));
