@@ -38,15 +38,16 @@ namespace WalletSystemAPI.Services
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fundingDto"></param>
+        /// <param name="fundNoobDto"></param>
+        /// <param name="walletId"></param>
         /// <returns></returns>
-        public async Task<bool> CreateFunding(FundingDto fundingDto)
+        public async Task<bool> CreateFunding(FundNoobDto fundNoobDto, int walletId)
         {
             Funding funding = new Funding()
             {
-                DestinationId = fundingDto.WalletId,
-                CurrencyId = fundingDto.CurrencyId,
-                Amount = fundingDto.Amount,
+                DestinationId = walletId,
+                CurrencyId = fundNoobDto.CurrencyId,
+                Amount = fundNoobDto.Amount,
                 IsApproved = false
             };
 

@@ -94,16 +94,16 @@ namespace WalletSystemAPI.Interfaces
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fundingDto"></param>
-        /// <returns></returns>
-        Task<bool> FundWallet(FundingDto fundingDto);
+        /// <param name="wallet"></param>
+        /// <param name="amount"></param>
+        Task<bool> FundWallet(Wallet wallet, decimal amount);
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fundingDto"></param>
+        /// <param name="funding"></param>
         /// <returns></returns>
-        Task<bool> FundNoobWallet(FundingDto fundingDto);
+        Task<bool> FundNoobWallet(Funding funding);
 
         /// <summary>
         ///
@@ -127,5 +127,20 @@ namespace WalletSystemAPI.Interfaces
         /// <param name="newWallet"></param>
         /// <returns></returns>
         Task<bool> ChangeMainCurrency(Wallet oldWallet, Wallet newWallet);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="fundingDto"></param>
+        /// <returns></returns>
+        bool UserHasWalletWithCurrency(FundingDto fundingDto);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="currencyId"></param>
+        /// <returns></returns>
+        Wallet GetUserWalletByCurrencyId(string userId, int currencyId);
     }
 }
