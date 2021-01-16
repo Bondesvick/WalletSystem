@@ -39,10 +39,7 @@ namespace WalletSystemAPI.Services
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Transaction> GetMyTransactions()
-        {
-            return _context.Transactions.Include(t => t.Wallet).Where(t => t.Wallet.OwnerId == GetUserId()).ToList();
-        }
+        public List<Transaction> GetMyTransactions() => _context.Transactions.Include(t => t.Wallet).Where(t => t.Wallet.OwnerId == GetUserId()).ToList();
 
         /// <summary>
         ///
@@ -102,38 +99,26 @@ namespace WalletSystemAPI.Services
         /// </summary>
         /// <param name="transactionId"></param>
         /// <returns></returns>
-        public bool CheckTransaction(int transactionId)
-        {
-            return _context.Transactions.Any(t => t.Id == transactionId);
-        }
+        public bool CheckTransaction(int transactionId) => _context.Transactions.Any(t => t.Id == transactionId);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Transaction GetTransactionById(int id)
-        {
-            return _context.Transactions.FirstOrDefault(t => t.Id == id);
-        }
+        public Transaction GetTransactionById(int id) => _context.Transactions.FirstOrDefault(t => t.Id == id);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="walletId"></param>
         /// <returns></returns>
-        public List<Transaction> GetWalletTransactions(int walletId)
-        {
-            return _context.Transactions.Where(t => t.WalletId == walletId).ToList();
-        }
+        public List<Transaction> GetWalletTransactions(int walletId) => _context.Transactions.Where(t => t.WalletId == walletId).ToList();
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Transaction> GetAllTransactions()
-        {
-            return _context.Transactions.ToList();
-        }
+        public List<Transaction> GetAllTransactions() => _context.Transactions.ToList();
     }
 }

@@ -18,51 +18,34 @@ namespace WalletSystemAPI.Services
         ///
         /// </summary>
         /// <param name="context"></param>
-        public CurrencyRepository(DataContext context)
-        {
-            _context = context;
-        }
+        public CurrencyRepository(DataContext context) => _context = context;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="currencyId"></param>
         /// <returns></returns>
-        public string GetCurrencyCode(int currencyId)
-        {
-            var currency = GetCurrencyById(currencyId);
-
-            return currency?.Code ?? string.Empty;
-        }
+        public string GetCurrencyCode(int currencyId) => GetCurrencyById(currencyId)?.Code ?? string.Empty;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="currencyId"></param>
         /// <returns></returns>
-        public bool CurrencyExist(int currencyId)
-        {
-            return _context.Currencies.Any(c => c.Id == currencyId);
-        }
+        public bool CurrencyExist(int currencyId) => _context.Currencies.Any(c => c.Id == currencyId);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Currency GetCurrencyById(int id)
-        {
-            return _context.Currencies.FirstOrDefault(c => c.Id == id);
-        }
+        public Currency GetCurrencyById(int id) => _context.Currencies.FirstOrDefault(c => c.Id == id);
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Currency> GetAllCurrencies()
-        {
-            return _context.Currencies.ToList();
-        }
+        public List<Currency> GetAllCurrencies() => _context.Currencies.ToList();
 
         /// <summary>
         ///

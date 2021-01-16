@@ -20,20 +20,14 @@ namespace WalletSystemAPI.Services
         ///
         /// </summary>
         /// <param name="context"></param>
-        public FundRepository(DataContext context)
-        {
-            _context = context;
-        }
+        public FundRepository(DataContext context) => _context = context;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Funding GetFundingById(int id)
-        {
-            return _context.Fundings.Include(f => f.Destination).FirstOrDefault(f => f.Id == id);
-        }
+        public Funding GetFundingById(int id) => _context.Fundings.Include(f => f.Destination).FirstOrDefault(f => f.Id == id);
 
         /// <summary>
         ///
@@ -88,27 +82,18 @@ namespace WalletSystemAPI.Services
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Funding> GetAllFundings()
-        {
-            return _context.Fundings.Include(f => f.Currency).ToList();
-        }
+        public List<Funding> GetAllFundings() => _context.Fundings.Include(f => f.Currency).ToList();
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Funding> GetUnApprovedFundings()
-        {
-            return _context.Fundings.Include(f => f.Currency).Where(f => !f.IsApproved).ToList();
-        }
+        public List<Funding> GetUnApprovedFundings() => _context.Fundings.Include(f => f.Currency).Where(f => !f.IsApproved).ToList();
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Funding> GetApprovedFundings()
-        {
-            return _context.Fundings.Include(f => f.Currency).Where(f => f.IsApproved).ToList();
-        }
+        public List<Funding> GetApprovedFundings() => _context.Fundings.Include(f => f.Currency).Where(f => f.IsApproved).ToList();
     }
 }
