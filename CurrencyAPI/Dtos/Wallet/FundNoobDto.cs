@@ -6,7 +6,7 @@ namespace WalletSystemAPI.Dtos.Wallet
     /// <summary>
     ///
     /// </summary>
-    public class FundingDto
+    public class FundNoobDto
     {
         /// <summary>
         ///

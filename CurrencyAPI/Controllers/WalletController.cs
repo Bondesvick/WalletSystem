@@ -20,6 +20,7 @@ namespace WalletSystemAPI.Controllers
         private readonly IWalletRepository _walletRepository;
         private readonly ICurrencyRepository _currencyRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IFundRepository _fundRepository;
 
         /// <summary>
         ///
@@ -27,11 +28,13 @@ namespace WalletSystemAPI.Controllers
         /// <param name="walletRepository"></param>
         /// <param name="currencyRepository"></param>
         /// <param name="userRepository"></param>
-        public WalletController(IWalletRepository walletRepository, ICurrencyRepository currencyRepository, IUserRepository userRepository)
+        /// <param name="fundRepository"></param>
+        public WalletController(IWalletRepository walletRepository, ICurrencyRepository currencyRepository, IUserRepository userRepository, IFundRepository fundRepository)
         {
             _walletRepository = walletRepository;
             _currencyRepository = currencyRepository;
             _userRepository = userRepository;
+            _fundRepository = fundRepository;
         }
 
         /// <summary>
@@ -148,11 +151,46 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        /// Allows a user to fund a wallet
+        /// Allows Noob/Elite users to fund a wallet
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Noob, Admin")]
+        [HttpPost("FundNoobWallet")]
+        public async Task<IActionResult> FundNoobWallet(FundNoobDto fundingDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ResponseMessage.Message("Invalid Model", ModelState, fundingDto));
+
+            var currencyExist = _currencyRepository.CurrencyExist(fundingDto.CurrencyId);
+
+            if (!currencyExist)
+                return NotFound(ResponseMessage.Message("Currency Not found", "currency id provided is invalid", fundingDto));
+
+            var user = _userRepository.GetUserById(fundingDto.WalletOwnerId);
+
+            if (user == null)
+                return NotFound(ResponseMessage.Message("User Not found", "user id provided is invalid", fundingDto));
+
+            var wallet = _walletRepository.GetWalletsByUserId(user.Id).FirstOrDefault();
+
+            if (wallet == null)
+                return NotFound(ResponseMessage.Message("Wallet not found", "user does not have a wallet", fundingDto));
+
+            //var noobWalletFunded = await _walletRepository.FundNoobWallet(fundingDto);
+            var noobWalletFunded = await _fundRepository.CreateFunding(fundingDto, wallet.Id);
+
+            if (!noobWalletFunded)
+                return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));
+
+            return Ok(ResponseMessage.Message("Successfully funded, waiting approval from an Admin", null, fundingDto));
+        }
+
+        /// <summary>
+        /// Allows Admins/Elite users to fund a wallet
         /// </summary>
         /// <param name="fundingDto"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "Elite, Admin")]
         [HttpPost("FundWallet")]
         public async Task<IActionResult> FundWallet(FundingDto fundingDto)
         {
@@ -164,29 +202,34 @@ namespace WalletSystemAPI.Controllers
             if (!currencyExist)
                 return NotFound(ResponseMessage.Message("Currency Not found", "currency id provided is invalid", fundingDto));
 
-            var walletExist = _walletRepository.CheckWallet(fundingDto.WalletId);
-
-            if (!walletExist)
-                return NotFound(ResponseMessage.Message("Wallet Not found", "wallet id provided is invalid", fundingDto));
-
             var user = _userRepository.GetUserById(fundingDto.WalletOwnerId);
 
             if (user == null)
                 return NotFound(ResponseMessage.Message("User Not found", "user id provided is invalid", fundingDto));
 
-            var userRoles = await _userRepository.GetUserRoles(user);
+            //var userHasCurrency = _walletRepository.UserHasWalletWithCurrency(fundingDto);
 
-            if (userRoles.Contains("Noob"))
+            var wallet = _walletRepository.GetUserWalletByCurrencyId(fundingDto.WalletOwnerId, fundingDto.CurrencyId);
+
+            if (wallet == null)
             {
-                var noobWalletFunded = await _walletRepository.FundNoobWallet(fundingDto);
+                Wallet newWallet = new Wallet()
+                {
+                    Balance = fundingDto.Amount,
+                    CurrencyId = fundingDto.CurrencyId,
+                    IsMain = false,
+                    OwnerId = fundingDto.WalletOwnerId,
+                };
 
-                if (!noobWalletFunded)
+                var walletCreated = _walletRepository.AddWallet(newWallet);
+
+                if (!walletCreated)
                     return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));
 
-                return Ok(ResponseMessage.Message("Successfully funded, waiting approval from an Admin", null, fundingDto));
+                return Ok(ResponseMessage.Message("Wallet successfully created and funded", null, fundingDto));
             }
 
-            var walletFunded = await _walletRepository.FundWallet(fundingDto);
+            var walletFunded = await _walletRepository.FundWallet(wallet, fundingDto.Amount);
 
             if (!walletFunded)
                 return BadRequest(ResponseMessage.Message("Unable to fund wallet", "An error was encountered while trying to fund the wallet", fundingDto));

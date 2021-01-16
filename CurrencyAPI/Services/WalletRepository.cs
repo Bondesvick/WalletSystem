@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WalletSystemAPI.Data;
+using WalletSystemAPI.Dtos.Funding;
 using WalletSystemAPI.Dtos.Wallet;
 using WalletSystemAPI.Helpers;
 using WalletSystemAPI.Interfaces;
@@ -204,33 +205,15 @@ namespace WalletSystemAPI.Services
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fundingDto"></param>
+        /// <param name="wallet"></param>
+        /// <param name="amount"></param>
         /// <returns></returns>
-        public async Task<bool> FundWallet(FundingDto fundingDto)
+        public async Task<bool> FundWallet(Wallet wallet, decimal amount)
         {
-            var wallet = GetWalletById(fundingDto.WalletId);
+            wallet.Balance += amount;
 
-            if (fundingDto.CurrencyId == wallet.CurrencyId)
-            {
-                wallet.Balance += fundingDto.Amount;
-
-                _transactionRepository.CreateTransaction(TransactionType.Credit, fundingDto.Amount, fundingDto.WalletId,
-                    fundingDto.CurrencyId);
-            }
-            else
-            {
-                var user = _userRepository.GetUserById(fundingDto.WalletOwnerId);
-                var roles = await _userRepository.GetUserRoles(user);
-
-                var targetCode = _currencyRepository.GetCurrencyCode(wallet.CurrencyId);
-                var sourceCode = _currencyRepository.GetCurrencyCode(fundingDto.CurrencyId);
-
-                var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, fundingDto.Amount);
-
-                wallet.Balance += newAmount ?? 0;
-
-                _transactionRepository.CreateTransaction(TransactionType.Credit, newAmount ?? 0, fundingDto.WalletId, fundingDto.CurrencyId);
-            }
+            _transactionRepository.CreateTransaction(TransactionType.Credit, amount, wallet.Id,
+                wallet.CurrencyId);
 
             return await UpdateWallet(wallet);
         }
@@ -238,11 +221,32 @@ namespace WalletSystemAPI.Services
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fundingDto"></param>
+        /// <param name="funding"></param>
         /// <returns></returns>
-        public async Task<bool> FundNoobWallet(FundingDto fundingDto)
+        public async Task<bool> FundNoobWallet(Funding funding)
         {
-            return await _fundRepository.CreateFunding(fundingDto);
+            var wallet = GetWalletById(funding.DestinationId);
+
+            if (funding.CurrencyId == wallet.CurrencyId)
+            {
+                wallet.Balance += funding.Amount;
+
+                _transactionRepository.CreateTransaction(TransactionType.Credit, funding.Amount, wallet.Id,
+                    wallet.CurrencyId);
+            }
+            else
+            {
+                var targetCode = _currencyRepository.GetCurrencyCode(wallet.CurrencyId);
+                var sourceCode = _currencyRepository.GetCurrencyCode(funding.CurrencyId);
+
+                var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, funding.Amount);
+
+                wallet.Balance += newAmount ?? 0;
+
+                _transactionRepository.CreateTransaction(TransactionType.Credit, newAmount ?? 0, wallet.Id, funding.CurrencyId);
+            }
+
+            return await UpdateWallet(wallet);
         }
 
         /// <summary>
@@ -328,6 +332,27 @@ namespace WalletSystemAPI.Services
             newWallet.IsMain = true;
 
             return await UpdateWallet(oldWallet) && await UpdateWallet(newWallet);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="fundingDto"></param>
+        /// <returns></returns>
+        public bool UserHasWalletWithCurrency(FundingDto fundingDto)
+        {
+            return _context.Wallets.Any(w => w.CurrencyId == fundingDto.CurrencyId && w.OwnerId == fundingDto.WalletOwnerId);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="currencyId"></param>
+        /// <returns></returns>
+        public Wallet GetUserWalletByCurrencyId(string userId, int currencyId)
+        {
+            return _context.Wallets.FirstOrDefault(w => w.CurrencyId == currencyId && w.OwnerId == userId);
         }
     }
 }

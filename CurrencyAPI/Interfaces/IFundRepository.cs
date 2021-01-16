@@ -20,9 +20,10 @@ namespace WalletSystemAPI.Interfaces
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fundingDto"></param>
+        /// <param name="fundNoobDto"></param>
+        /// <param name="walletId"></param>
         /// <returns></returns>
-        Task<bool> CreateFunding(FundingDto fundingDto);
+        Task<bool> CreateFunding(FundNoobDto fundNoobDto, int walletId);
 
         /// <summary>
         ///

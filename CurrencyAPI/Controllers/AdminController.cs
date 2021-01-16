@@ -170,15 +170,12 @@ namespace WalletSystemAPI.Controllers
             if (funding == null)
                 return BadRequest(ResponseMessage.Message("Invalid funding Id", "funding with the id was not found", approveFundingDto));
 
-            FundingDto fundingDto = new FundingDto()
-            {
-                Amount = funding.Amount,
-                CurrencyId = funding.CurrencyId,
-                WalletOwnerId = funding.Destination.OwnerId,
-                WalletId = funding.DestinationId
-            };
+            var wallet = _walletRepository.GetWalletById(funding.DestinationId);
 
-            var funded = await _walletRepository.FundWallet(fundingDto);
+            if (wallet == null)
+                return BadRequest(ResponseMessage.Message("Invalid wallet Id", "wallet with the id was not found", approveFundingDto));
+
+            var funded = await _walletRepository.FundNoobWallet(funding);
 
             if (!funded)
                 return BadRequest(ResponseMessage.Message("Unable to fund account", "and error was encountered while trying to fund this account", approveFundingDto));
