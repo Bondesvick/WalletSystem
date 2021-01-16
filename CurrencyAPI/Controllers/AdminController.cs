@@ -143,12 +143,13 @@ namespace WalletSystemAPI.Controllers
             var oldRole = roles.FirstOrDefault();
 
             if (oldRole == null)
-            {
                 _userRepository.AddUserToRole(user, changeUserAccountTypeDto.NewType);
-            }
             else
-            {
                 await _userRepository.ChangeUserRole(user, oldRole, changeUserAccountTypeDto.NewType);
+
+            if (changeUserAccountTypeDto.NewType == "Noob")
+            {
+                await _walletRepository.MergeAllWalletsToMain(user);
             }
 
             return Ok(ResponseMessage.Message("Account type changed successfully", null, changeUserAccountTypeDto));

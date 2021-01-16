@@ -47,6 +47,25 @@ namespace WalletSystemAPI.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<bool> MergeAllWalletsToMain(User user)
+        {
+            var mainWallet = GetUserMainCurrencyWallet(user.Id);
+            var userWallets = GetWalletsByUserId(user.Id);
+
+            foreach (var wallet in userWallets)
+            {
+                await DeleteWallet(wallet.Id);
+                await FundWallet(mainWallet, wallet);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <returns></returns>
         public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -139,68 +158,47 @@ namespace WalletSystemAPI.Services
         /// </summary>
         /// <param name="walletId"></param>
         /// <returns></returns>
-        public bool CheckWallet(int walletId)
-        {
-            return _context.Wallets.Any(w => w.Id == walletId);
-        }
+        public bool CheckWallet(int walletId) => _context.Wallets.Any(w => w.Id == walletId);
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Wallet> GetAllMyWallets()
-        {
-            return _context.Wallets.Include(w => w.Currency).Where(w => w.OwnerId == GetUserId()).ToList();
-        }
+        public List<Wallet> GetAllMyWallets() => _context.Wallets.Include(w => w.Currency).Where(w => w.OwnerId == GetUserId()).ToList();
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Wallet GetWalletById(int id)
-        {
-            return _context.Wallets.Include(w => w.Currency).FirstOrDefault(w => w.Id == id);
-        }
+        public Wallet GetWalletById(int id) => _context.Wallets.Include(w => w.Currency).FirstOrDefault(w => w.Id == id);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public List<Wallet> GetWalletsById(int id)
-        {
-            return _context.Wallets.Include(w => w.Currency).Where(w => w.Id == id).ToList();
-        }
+        public List<Wallet> GetWalletsById(int id) => _context.Wallets.Include(w => w.Currency).Where(w => w.Id == id).ToList();
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
-        public List<Wallet> GetWalletsByUserId(string ownerId)
-        {
-            return _context.Wallets.Where(w => w.OwnerId == ownerId).ToList();
-        }
+        public List<Wallet> GetWalletsByUserId(string ownerId) => _context.Wallets.Where(w => w.OwnerId == ownerId).ToList();
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Wallet GetUserMainCurrencyWallet(string userId)
-        {
-            return _context.Wallets.FirstOrDefault(w => w.OwnerId == userId && w.IsMain);
-        }
+        public Wallet GetUserMainCurrencyWallet(string userId) => _context.Wallets.FirstOrDefault(w => w.OwnerId == userId && w.IsMain);
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<Wallet> GetAllWallets()
-        {
-            return _context.Wallets.ToList();
-        }
+        public List<Wallet> GetAllWallets() => _context.Wallets.ToList();
 
         /// <summary>
         ///
@@ -216,6 +214,39 @@ namespace WalletSystemAPI.Services
                 wallet.CurrencyId);
 
             return await UpdateWallet(wallet);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="main"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public async Task<bool> FundWallet(Wallet main, Wallet source)
+        {
+            //var wallet = GetWalletById(funding.DestinationId);
+
+            if (main.CurrencyId == source.CurrencyId)
+            {
+                main.Balance += source.Balance;
+
+                _transactionRepository.CreateTransaction(TransactionType.Credit, source.Balance, main.Id,
+                    source.CurrencyId);
+            }
+            else
+            {
+                var targetCode = _currencyRepository.GetCurrencyCode(main.CurrencyId);
+                var sourceCode = _currencyRepository.GetCurrencyCode(source.CurrencyId);
+
+                var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, source.Balance);
+
+                main.Balance += newAmount ?? 0;
+
+                _transactionRepository.CreateTransaction(TransactionType.Credit, newAmount ?? 0, main.Id,
+                    source.CurrencyId);
+            }
+
+            return await UpdateWallet(main);
         }
 
         /// <summary>
@@ -255,10 +286,7 @@ namespace WalletSystemAPI.Services
         /// <param name="balance"></param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public bool CanWithdrawFromWallet(decimal balance, decimal? amount)
-        {
-            return (balance - amount) >= 0;
-        }
+        public bool CanWithdrawFromWallet(decimal balance, decimal? amount) => (balance - amount) >= 0;
 
         /// <summary>
         ///
@@ -350,9 +378,6 @@ namespace WalletSystemAPI.Services
         /// <param name="userId"></param>
         /// <param name="currencyId"></param>
         /// <returns></returns>
-        public Wallet GetUserWalletByCurrencyId(string userId, int currencyId)
-        {
-            return _context.Wallets.FirstOrDefault(w => w.CurrencyId == currencyId && w.OwnerId == userId);
-        }
+        public Wallet GetUserWalletByCurrencyId(string userId, int currencyId) => _context.Wallets.FirstOrDefault(w => w.CurrencyId == currencyId && w.OwnerId == userId);
     }
 }

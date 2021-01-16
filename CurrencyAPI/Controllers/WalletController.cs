@@ -151,7 +151,7 @@ namespace WalletSystemAPI.Controllers
         }
 
         /// <summary>
-        /// Allows Noob/Elite users to fund a wallet
+        /// Allows Noob/Admin users to fund a wallet
         /// </summary>
         /// <returns></returns>
         [Authorize(Roles = "Noob, Admin")]

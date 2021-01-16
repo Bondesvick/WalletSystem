@@ -71,30 +71,21 @@ namespace WalletSystemAPI.Services
         ///
         /// </summary>
         /// <returns></returns>
-        public GetUserDto GetMyDetails()
-        {
-            return MapUser(GetUserId());
-        }
+        public GetUserDto GetMyDetails() => MapUser(GetUserId());
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public User GetUserById(string id)
-        {
-            return _userManager.Users.FirstOrDefault(user => user.Id == id);
-        }
+        public User GetUserById(string id) => _userManager.Users.FirstOrDefault(user => user.Id == id);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        public Task<User> GetUserByEmail(string email)
-        {
-            return _userManager.FindByEmailAsync(email);
-        }
+        public Task<User> GetUserByEmail(string email) => _userManager.FindByEmailAsync(email);
 
         /// <summary>
         ///
@@ -113,19 +104,13 @@ namespace WalletSystemAPI.Services
         /// </summary>
         /// <param name="user"></param>
         /// <param name="role"></param>
-        public void AddUserToRole(User user, string role)
-        {
-            _userManager.AddToRoleAsync(user, role);
-        }
+        public void AddUserToRole(User user, string role) => _userManager.AddToRoleAsync(user, role);
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        public List<User> GetAllUsers()
-        {
-            return _userManager.Users.ToList();
-        }
+        public List<User> GetAllUsers() => _userManager.Users.ToList();
 
         /// <summary>
         ///
@@ -160,10 +145,7 @@ namespace WalletSystemAPI.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Task<IList<string>> GetUserRoles(User user)
-        {
-            return _userManager.GetRolesAsync(user);
-        }
+        public Task<IList<string>> GetUserRoles(User user) => _userManager.GetRolesAsync(user);
 
         /// <summary>
         ///
