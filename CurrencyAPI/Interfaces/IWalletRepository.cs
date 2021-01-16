@@ -13,6 +13,13 @@ namespace WalletSystemAPI.Interfaces
         /// <summary>
         ///
         /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        Task<bool> MergeAllWalletsToMain(User user);
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <returns></returns>
         public string GetUserId();
 
@@ -97,6 +104,14 @@ namespace WalletSystemAPI.Interfaces
         /// <param name="wallet"></param>
         /// <param name="amount"></param>
         Task<bool> FundWallet(Wallet wallet, decimal amount);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="main"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        Task<bool> FundWallet(Wallet main, Wallet source);
 
         /// <summary>
         ///

@@ -47,6 +47,25 @@ namespace WalletSystemAPI.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<bool> MergeAllWalletsToMain(User user)
+        {
+            var mainWallet = GetUserMainCurrencyWallet(user.Id);
+            var userWallets = GetWalletsByUserId(user.Id);
+
+            foreach (var wallet in userWallets)
+            {
+                await DeleteWallet(wallet.Id);
+                await FundWallet(mainWallet, wallet);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <returns></returns>
         public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -195,6 +214,39 @@ namespace WalletSystemAPI.Services
                 wallet.CurrencyId);
 
             return await UpdateWallet(wallet);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="main"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public async Task<bool> FundWallet(Wallet main, Wallet source)
+        {
+            //var wallet = GetWalletById(funding.DestinationId);
+
+            if (main.CurrencyId == source.CurrencyId)
+            {
+                main.Balance += source.Balance;
+
+                _transactionRepository.CreateTransaction(TransactionType.Credit, source.Balance, main.Id,
+                    source.CurrencyId);
+            }
+            else
+            {
+                var targetCode = _currencyRepository.GetCurrencyCode(main.CurrencyId);
+                var sourceCode = _currencyRepository.GetCurrencyCode(source.CurrencyId);
+
+                var newAmount = await CurrencyRate.ConvertCurrency(sourceCode, targetCode, source.Balance);
+
+                main.Balance += newAmount ?? 0;
+
+                _transactionRepository.CreateTransaction(TransactionType.Credit, newAmount ?? 0, main.Id,
+                    source.CurrencyId);
+            }
+
+            return await UpdateWallet(main);
         }
 
         /// <summary>
