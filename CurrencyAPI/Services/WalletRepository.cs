@@ -56,8 +56,8 @@ namespace WalletSystemAPI.Services
 
             foreach (var wallet in userWallets)
             {
-                await DeleteWallet(wallet.Id);
                 await FundWallet(mainWallet, wallet);
+                await DeleteWallet(wallet.Id);
             }
 
             return true;
