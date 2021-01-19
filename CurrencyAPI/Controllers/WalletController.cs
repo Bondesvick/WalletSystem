@@ -10,7 +10,7 @@ using WalletSystemAPI.Models;
 namespace WalletSystemAPI.Controllers
 {
     /// <summary>
-    ///
+    /// Controller
     /// </summary>
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
